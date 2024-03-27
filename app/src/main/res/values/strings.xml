@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">kreekandroid</string>
+
+    <!--Sheared-->
+    <string name="ok">"OK"</string>
+    <string name="http_error">"HTTP Error %s"</string>
+    <string name="http_error_bad_request_exception">"Bad Request Exception"</string>
+    <string name="http_error_un_Authorized_exception">"UnAuthorized Exception"</string>
+    <string name="http_error_not_found_exception">"Not Found Exception"</string>
+    <string name="http_error_un_processable_exception">"UnProcessable Exception"</string>
+    <string name="http_error_server_error_exception">"Server Error Exception"</string>
+    <string name="http_error_unknown_backend_exception">"Unknown_Server Exception"</string>
+</resources>

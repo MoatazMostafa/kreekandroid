@@ -1,6 +1,7 @@
 package com.kreek.kreekandroid.ui.features.home
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import com.kreek.kreekandroid.ui.features.home.composable.HomeContent
 import com.kreek.kreekandroid.ui.shared.base.BaseScreen
@@ -12,6 +13,14 @@ fun HomeScreen(
 ) {
     BaseScreen(content = {
         val tabs = listOf("Patients", "Updates", "Profile")
-       // HomeContent(homeViewModel = homeViewModel, patientListItemList = emptyList<List<PatientListItem>>())
+        HomeContent(
+            modifier = modifier,
+            patientList = homeViewModel.patientList.collectAsState().value,
+            tabs = tabs,
+            selectedTabIndex = homeViewModel.selectedTabIndex.collectAsState().value,
+            onTabClick = homeViewModel::onTabSelected,
+            onSearchTextChanged = homeViewModel::onSearchTextChanged,
+            onPatientClick = homeViewModel::onPatientClick
+        )
     }, viewModel = homeViewModel)
 }

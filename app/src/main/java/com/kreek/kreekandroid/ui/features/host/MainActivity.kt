@@ -11,7 +11,6 @@ import androidx.navigation.compose.rememberNavController
 import com.kreek.kreekandroid.ui.theme.KreekandroidTheme
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-
 class MainActivity : ComponentActivity() {
     private val viewModel: MainViewModel by viewModel()
     var navController: NavController? = null
@@ -23,7 +22,6 @@ class MainActivity : ComponentActivity() {
                 navController = rememberNavController().also { _navController ->
                     viewModel.updateNavController(_navController)
                     Box(modifier = Modifier.fillMaxSize()) {
-
                         MainScreen(
                             navController = _navController,
                         )

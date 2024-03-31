@@ -1,6 +1,7 @@
 package com.kreek.kreekandroid.ui.shared.composables
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.TabRowDefaults
@@ -12,10 +13,14 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
+import com.kreek.kreekandroid.ui.theme.Black
+import com.kreek.kreekandroid.ui.theme.Gray
+import com.kreek.kreekandroid.ui.theme.KreekandroidTheme
 import com.kreek.kreekandroid.ui.theme.Primary
 
 @Composable
-fun Tabs(
+fun TabContent(
     modifier: Modifier = Modifier,
     tabsList: List<String> = emptyList(),
     selectedTabIndex: Int = 0,
@@ -45,9 +50,27 @@ fun Tabs(
                         currentSelectedTabIndex = index
                         onTabClick(index)
                     },
-                    text = { Text(text = item) }
+                    text = {
+                        Text(
+                            text = item,
+                            style = MaterialTheme.typography.headlineSmall,
+                            color = if (index == currentSelectedTabIndex) MaterialTheme.colorScheme.onSurface else Gray
+                        )
+                    }
                 )
             }
         }
+    }
+}
+
+@Preview
+@Composable
+fun TabContentPreview() {
+    KreekandroidTheme {
+        TabContent(
+            tabsList = listOf("Patients", "Updates", "Profile"),
+            selectedTabIndex = 0,
+            onTabClick = { }
+        )
     }
 }

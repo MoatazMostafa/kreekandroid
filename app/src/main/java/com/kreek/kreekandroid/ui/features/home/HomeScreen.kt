@@ -20,7 +20,8 @@ fun HomeScreen(
             selectedTabIndex = homeViewModel.selectedTabIndex.collectAsState().value,
             onTabClick = homeViewModel::onTabSelected,
             onSearchTextChanged = homeViewModel::onSearchTextChanged,
-            onPatientClick = homeViewModel::onPatientClick
+            onPatientClick = homeViewModel::onPatientClick,
+            onFloatingButtonClick = homeViewModel::onFloatingButtonClick
         )
     }, viewModel = homeViewModel)
 }

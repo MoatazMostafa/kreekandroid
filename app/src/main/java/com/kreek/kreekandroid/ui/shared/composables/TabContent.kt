@@ -14,7 +14,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.kreek.kreekandroid.ui.theme.Black
 import com.kreek.kreekandroid.ui.theme.Gray
 import com.kreek.kreekandroid.ui.theme.KreekandroidTheme
 import com.kreek.kreekandroid.ui.theme.Primary
@@ -34,6 +33,7 @@ fun TabContent(
             modifier = Modifier,
             selectedTabIndex = currentSelectedTabIndex,
             divider = {},
+            containerColor = MaterialTheme.colorScheme.background,
             contentColor = Primary,
             indicator = @Composable { tabPositions ->
                 if (currentSelectedTabIndex < tabPositions.size) {

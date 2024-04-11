@@ -1,6 +1,12 @@
 package com.kreek.kreekandroid.common.koin
 
 
+import com.kreek.kreekandroid.data.repository.FirebaseRepository
+import com.kreek.kreekandroid.data.repository.FirebaseRepositoryImpl
+import com.kreek.kreekandroid.data.repository.LocalCachedRepository
+import com.kreek.kreekandroid.data.repository.LocalCachedRepositoryImpl
+import com.kreek.kreekandroid.data.repository.VectaraRepository
+import com.kreek.kreekandroid.data.repository.VectaraRepositoryImpl
 import org.koin.dsl.module
 
 /**
@@ -8,17 +14,22 @@ import org.koin.dsl.module
  * */
 val repositoryModule = module {
 
-//    single<MoviesRepository> {
-//        MoviesRepositoryImpl(
-//            remoteMoviesDataSource = get(),
-//            localDataSource = get()
-//        )
-//    }
-//
-//    single<MovieDetailsRepository> {
-//        MovieDetailsRepositoryImpl(
-//            remoteMovieDetailsDataSource = get(),
-//            localDataSource = get()
-//        )
-//    }
+    single<FirebaseRepository> {
+        FirebaseRepositoryImpl(
+            sendChatMessageDataSource = get(),
+            receiveChatMessageDataSource = get(),
+            createDoctorDataSource = get(),
+            getDoctorDataSource = get()
+        )
+    }
+
+    single<LocalCachedRepository> {
+        LocalCachedRepositoryImpl(
+            localCachedDataSource = get()
+        )
+    }
+
+    single<VectaraRepository> {
+        VectaraRepositoryImpl()
+    }
 }

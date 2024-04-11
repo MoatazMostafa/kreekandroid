@@ -2,7 +2,7 @@ package com.kreek.kreekandroid.ui.features.splash
 
 import android.app.Application
 import androidx.lifecycle.viewModelScope
-import com.kreek.kreekandroid.common.manager.navigation.MoviesNavDestination
+import com.kreek.kreekandroid.common.manager.navigation.KreekNavDestination
 import com.kreek.kreekandroid.ui.shared.base.BaseViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,7 +20,7 @@ class SplashViewModel(application: Application) : BaseViewModel(
         viewModelScope.launch {
             delay(3000)
             navController?.popBackStack()
-            navController?.navigate(route = MoviesNavDestination.Home.navComposableDestination)
+            navController?.navigate(route = KreekNavDestination.Home.navComposableDestination)
         }
     }
 

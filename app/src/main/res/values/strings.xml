@@ -10,4 +10,6 @@
     <string name="http_error_un_processable_exception">"UnProcessable Exception"</string>
     <string name="http_error_server_error_exception">"Server Error Exception"</string>
     <string name="http_error_unknown_backend_exception">"Unknown_Server Exception"</string>
+    <string name="search">Search</string>
+    <string name="tap_here_for_more_info">tap here for more info</string>
 </resources>

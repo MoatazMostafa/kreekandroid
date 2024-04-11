@@ -2,14 +2,19 @@ package com.kreek.kreekandroid.common.manager.navigation
 
 import com.kreek.kreekandroid.common.manager.navigation.destination.HomeNavDestination
 import com.kreek.kreekandroid.common.manager.navigation.destination.SplashNavDestination
+import com.kreek.kreekandroid.common.manager.navigation.destination.patientchatroom.ChatRoomNavDestination
+import com.kreek.kreekandroid.common.manager.navigation.destination.patientinfo.PatientInfoNavDestination
 
-object MoviesNavDestination {
+object KreekNavDestination {
 
     val Splash = SplashNavDestination
 
     val Home = HomeNavDestination
 
-   // val MovieDetails = MovieDetailsNavDestination
+    val ChatRoom = ChatRoomNavDestination
+
+    val PatientInfo = PatientInfoNavDestination
+
 }
 
 

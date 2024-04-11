@@ -1,12 +1,10 @@
 package com.kreek.kreekandroid.ui.features.home
 
 import android.app.Application
-import android.util.Log
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import com.kreek.kreekandroid.ui.features.home.uimodel.PatientUIModel
+import com.kreek.kreekandroid.common.manager.navigation.KreekNavDestination
 import com.kreek.kreekandroid.ui.shared.base.BaseViewModel
-import com.kreek.kreekandroid.ui.shared.uimodel.MessageItem
+import com.kreek.kreekandroid.ui.shared.uimodel.PatientUIModel
+import com.kreek.kreekandroid.ui.shared.uimodel.getMockPatientList
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
@@ -25,47 +23,7 @@ class HomeViewModel(application: Application) : BaseViewModel(
 
     private fun fetchPatientList() {
         //TODO("Not yet implemented")
-        _patientList.value = listOf( PatientUIModel(
-            name = "John Doe",
-            patientId = "0",
-            age = 25,
-            lastMessagesItem = MessageItem(
-                messageText = "Today",
-                messageDate = "12/1/2024",
-                messageSenderId = "0",
-                messageSenderName = "John Doe"
-            )
-        ),  PatientUIModel(
-            name = "John Doe",
-            patientId = "0",
-            age = 25,
-            lastMessagesItem = MessageItem(
-                messageText = "Today",
-                messageDate = "12/1/2024",
-                messageSenderId = "0",
-                messageSenderName = "John Doe"
-            )
-        ),  PatientUIModel(
-            name = "John Doe",
-            patientId = "0",
-            age = 25,
-            lastMessagesItem = MessageItem(
-                messageText = "Today",
-                messageDate = "12/1/2024",
-                messageSenderId = "0",
-                messageSenderName = "John Doe"
-            )
-        ),  PatientUIModel(
-            name = "John Doe",
-            patientId = "0",
-            age = 25,
-            lastMessagesItem = MessageItem(
-                messageText = "Today",
-                messageDate = "12/1/2024",
-                messageSenderId = "0",
-                messageSenderName = "John Doe"
-            )
-        ))
+        _patientList.value = getMockPatientList() + getMockPatientList() + getMockPatientList()
     }
 
     fun onTabSelected(tabIndex: Int) {
@@ -82,7 +40,17 @@ class HomeViewModel(application: Application) : BaseViewModel(
     }
 
     fun onPatientClick(patientUIModel: PatientUIModel) {
-        //TODO Navigate to patient details screen
+        navController?.navigate(
+            route =
+            KreekNavDestination.ChatRoom.getNavigationRoute(chatRoomId = patientUIModel.patientId).route
+        )
+    }
+
+    fun onFloatingButtonClick() {
+        navController?.navigate(
+            route =
+            KreekNavDestination.ChatRoom.getNavigationRoute(chatRoomId = "1", chatRoomType = "chat_bot").route
+        )
     }
 
 }

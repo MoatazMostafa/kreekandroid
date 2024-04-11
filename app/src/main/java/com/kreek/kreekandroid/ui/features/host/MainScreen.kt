@@ -1,9 +1,11 @@
 package com.kreek.kreekandroid.ui.features.host
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -17,9 +19,13 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.kreek.kreekandroid.common.manager.navigation.MoviesNavDestination
+import com.kreek.kreekandroid.common.manager.navigation.KreekNavDestination
 import com.kreek.kreekandroid.ui.features.home.HomeScreen
 import com.kreek.kreekandroid.ui.features.home.HomeViewModel
+import com.kreek.kreekandroid.ui.features.chatroom.ChatRoomScreen
+import com.kreek.kreekandroid.ui.features.chatroom.ChatRoomViewModel
+import com.kreek.kreekandroid.ui.features.patientinfo.PatientInfoScreen
+import com.kreek.kreekandroid.ui.features.patientinfo.PatientInfoViewModel
 import com.kreek.kreekandroid.ui.features.splash.SplashScreen
 import com.kreek.kreekandroid.ui.features.splash.SplashViewModel
 import com.kreek.kreekandroid.ui.shared.composables.TopAppBar
@@ -37,7 +43,9 @@ fun MainScreen(
     var topBarProperties by remember { mutableStateOf(TopBarProperties(showTopBar = false)) }
 
     Scaffold(
-        modifier = Modifier.navigationBarsPadding(),
+        modifier = Modifier
+            .background(MaterialTheme.colorScheme.background)
+            .navigationBarsPadding(),
         topBar = {
             TopAppBar(
                 showTopBar = topBarProperties.showTopBar,
@@ -53,9 +61,9 @@ fun MainScreen(
         Column(modifier = modifier.zIndex(100f)) {
             NavHost(
                 navController = navController,
-                startDestination = MoviesNavDestination.Splash.navComposableDestination
+                startDestination = KreekNavDestination.Splash.navComposableDestination
             ) {
-                composable(route = MoviesNavDestination.Splash.navComposableDestination) {
+                composable(route = KreekNavDestination.Splash.navComposableDestination) {
                     val splashViewModel: SplashViewModel = koinViewModel<SplashViewModel>().apply {
                         updateNavController(navController = navController)
                         parametersOf(navController)
@@ -70,14 +78,18 @@ fun MainScreen(
                         splashViewModel = splashViewModel
                     )
                 }
-                composable(route = MoviesNavDestination.Home.navComposableDestination) {
+                composable(route = KreekNavDestination.Home.navComposableDestination) {
                     topBarProperties = TopBarProperties(
                         showTopBar = true,
                         showKreekLogo = true,
                         showBackButton = false,
-                        topBarActionList =  listOf(TopBarAction.Search, TopBarAction.Profile, TopBarAction.Menu),
+                        topBarActionList = listOf(
+                            TopBarAction.Search,
+                            TopBarAction.Profile,
+                            TopBarAction.Menu
+                        ),
                         topBarActionClick = {
-                           //TODO handle topBar button click
+                            //TODO handle topBar button click
                         }
                     )
 
@@ -92,6 +104,70 @@ fun MainScreen(
                             showToolbar = true,
                         ),
                         homeViewModel = homeViewModel
+                    )
+                }
+
+                composable(route = KreekNavDestination.ChatRoom.navComposableDestination)
+                { backStackEntry ->
+                    topBarProperties = TopBarProperties(
+                        showTopBar = true,
+                        showKreekLogo = false,
+                        showBackButton = true,
+                        backButtonClick = { navController.popBackStack() },
+                        topBarActionList = listOf(
+                            TopBarAction.VideoCall,
+                            TopBarAction.VoiceCall,
+                            TopBarAction.Menu
+                        ),
+                        topBarActionClick = {
+                            //TODO handle topBar button click
+                        }
+                    )
+
+                    val patientChatRoomViewModel: ChatRoomViewModel =
+                        koinViewModel<ChatRoomViewModel> {
+                            parametersOf(backStackEntry.arguments)
+                        }.apply {
+                            updateNavController(navController = navController)
+                            parametersOf(navController)
+                        }
+
+                    ChatRoomScreen(
+                        modifier = Modifier.paddedModifier(
+                            innerPaddingValues = innerPadding,
+                            showToolbar = true,
+                        ),
+                        patientChatRoomViewModel = patientChatRoomViewModel
+                    )
+                }
+
+                composable(route = KreekNavDestination.PatientInfo.navComposableDestination)
+                { backStackEntry ->
+                    topBarProperties = TopBarProperties(
+                        showTopBar = true,
+                        showKreekLogo = false,
+                        showBackButton = true,
+                        topBarActionList = listOf(TopBarAction.Menu),
+                        backButtonClick = { navController.popBackStack() },
+                        topBarActionClick = {
+
+                        }
+                    )
+
+                    val patientInfoViewModel: PatientInfoViewModel =
+                        koinViewModel<PatientInfoViewModel> {
+                            parametersOf(backStackEntry.arguments)
+                        }.apply {
+                            updateNavController(navController = navController)
+                            parametersOf(navController)
+                        }
+
+                    PatientInfoScreen(
+                        modifier = Modifier.paddedModifier(
+                            innerPaddingValues = innerPadding,
+                            showToolbar = true,
+                        ),
+                        patientInfoViewModel = patientInfoViewModel
                     )
                 }
             }

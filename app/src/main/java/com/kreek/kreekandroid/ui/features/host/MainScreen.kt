@@ -20,12 +20,16 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.kreek.kreekandroid.common.manager.navigation.KreekNavDestination
-import com.kreek.kreekandroid.ui.features.home.HomeScreen
-import com.kreek.kreekandroid.ui.features.home.HomeViewModel
+import com.kreek.kreekandroid.ui.features.authentication.AuthenticationScreen
+import com.kreek.kreekandroid.ui.features.authentication.AuthenticationViewModel
 import com.kreek.kreekandroid.ui.features.chatroom.ChatRoomScreen
 import com.kreek.kreekandroid.ui.features.chatroom.ChatRoomViewModel
+import com.kreek.kreekandroid.ui.features.home.HomeScreen
+import com.kreek.kreekandroid.ui.features.home.HomeViewModel
 import com.kreek.kreekandroid.ui.features.patientinfo.PatientInfoScreen
 import com.kreek.kreekandroid.ui.features.patientinfo.PatientInfoViewModel
+import com.kreek.kreekandroid.ui.features.selectdoctorchat.SelectDoctorChatScreen
+import com.kreek.kreekandroid.ui.features.selectdoctorchat.SelectDoctorChatViewModel
 import com.kreek.kreekandroid.ui.features.splash.SplashScreen
 import com.kreek.kreekandroid.ui.features.splash.SplashViewModel
 import com.kreek.kreekandroid.ui.shared.composables.TopAppBar
@@ -78,6 +82,21 @@ fun MainScreen(
                         splashViewModel = splashViewModel
                     )
                 }
+                composable(route = KreekNavDestination.Authentication.navComposableDestination) {
+                    val authenticationViewModel: AuthenticationViewModel = koinViewModel<AuthenticationViewModel>().apply {
+                        updateNavController(navController = navController)
+                        parametersOf(navController)
+                    }
+
+                    topBarProperties = TopBarProperties(showTopBar = false)
+                    AuthenticationScreen(
+                        modifier = Modifier.paddedModifier(
+                            innerPaddingValues = innerPadding,
+                            showToolbar = false,
+                        ),
+                        authenticationViewModel = authenticationViewModel
+                    )
+                }
                 composable(route = KreekNavDestination.Home.navComposableDestination) {
                     topBarProperties = TopBarProperties(
                         showTopBar = true,
@@ -90,6 +109,19 @@ fun MainScreen(
                         ),
                         topBarActionClick = {
                             //TODO handle topBar button click
+                            when (it) {
+                                TopBarAction.Search -> {
+                                    //TODO navigate to menu screen
+                                }
+                                TopBarAction.Profile -> {
+                                    navController.navigate(KreekNavDestination.SelectDoctorChat.navComposableDestination)
+                                }
+                                TopBarAction.Menu -> {
+                                    //TODO navigate to menu screen
+                                }
+                                else -> {
+                                }
+                            }
                         }
                     )
 
@@ -170,6 +202,32 @@ fun MainScreen(
                         patientInfoViewModel = patientInfoViewModel
                     )
                 }
+
+                composable(route = KreekNavDestination.SelectDoctorChat.navComposableDestination) {
+                    topBarProperties = TopBarProperties(
+                        showTopBar = true,
+                        showKreekLogo = false,
+                        showBackButton = true,
+                        topBarActionList = listOf(),
+                        topBarActionClick = {
+                            //TODO handle topBar button click
+                        }
+                    )
+
+                    val selectDoctorChatViewModel: SelectDoctorChatViewModel = koinViewModel<SelectDoctorChatViewModel>().apply {
+                        updateNavController(navController = navController)
+                        parametersOf(navController)
+                    }
+
+                    SelectDoctorChatScreen(
+                        modifier = Modifier.paddedModifier(
+                            innerPaddingValues = innerPadding,
+                            showToolbar = true,
+                        ),
+                        selectDoctorChatViewModel = selectDoctorChatViewModel
+                    )
+                }
+
             }
         }
     }

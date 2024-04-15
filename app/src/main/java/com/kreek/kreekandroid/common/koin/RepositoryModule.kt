@@ -18,8 +18,15 @@ val repositoryModule = module {
         FirebaseRepositoryImpl(
             sendChatMessageDataSource = get(),
             receiveChatMessageDataSource = get(),
-            createDoctorDataSource = get(),
-            getDoctorDataSource = get()
+            setDoctorDataSource = get(),
+            getDoctorDataSource = get(),
+            addChatRoomInfoDataSource = get(),
+            getChatRoomInfoDataSource = get(),
+            getDoctorListDataSource = get(),
+            getDoctorByNumberDataSource = get(),
+            getChatRoomInfoByIdDataSource = get(),
+            getPatientDataSource = get(),
+            setPatientDataSource = get()
         )
     }
 

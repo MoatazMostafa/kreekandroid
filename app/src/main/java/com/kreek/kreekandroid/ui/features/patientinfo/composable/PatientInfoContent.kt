@@ -17,7 +17,6 @@ import androidx.compose.ui.unit.dp
 import com.kreek.kreekandroid.R
 import com.kreek.kreekandroid.ui.shared.composables.CircleShapeIcon
 import com.kreek.kreekandroid.ui.shared.uimodel.PatientUIModel
-import com.kreek.kreekandroid.ui.shared.uimodel.getIconResource
 import com.kreek.kreekandroid.ui.shared.uimodel.getMockPatient
 import com.kreek.kreekandroid.ui.theme.KreekandroidTheme
 import com.kreek.kreekandroid.ui.theme.TypographyCustom
@@ -29,11 +28,11 @@ fun PatientInfoContent(
 ) {
 
     Column(modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
-        CircleShapeIcon(icon = patient.patientDiagnosis.getIconResource())
+        CircleShapeIcon(icon = R.drawable.ic_lying_patient)
         Spacer(modifier = Modifier.width(16.dp))
         Column(modifier = Modifier.padding(top = 8.dp), horizontalAlignment = Alignment.CenterHorizontally) {
             Text(
-                text = patient.name,
+                text = patient.patientData.name,
                 style = TypographyCustom.headlineXSmall,
                 color = MaterialTheme.colorScheme.onSurface
             )

@@ -51,14 +51,19 @@ fun ChatMessage.toUIModel() = ChatMessageUIModel(
     chatType = ChatType.fromString(chatType)
 )
 
-enum class ChatRoomType(val value: String) {
-    PRIVATE("private"),
-    GROUP("group"),
-    CHAT_BOT("chat_bot");
-
-    companion object {
-        fun fromString(value: String): ChatRoomType {
-            return values().firstOrNull { it.value == value } ?: PRIVATE
-        }
-    }
-}
+//enum class ChatRoomType(val value: String) {
+//    PRIVATE("private"),
+//    GROUP("group"),
+//    CHAT_BOT("chat_bot");
+//
+//    companion object {
+//        fun fromString(value: String): ChatRoomType {
+//            return values().firstOrNull { it.value == value } ?: PRIVATE
+//        }
+//    }
+//}
+//fun ChatRoomType.toDomainModel() = when(this){
+//    ChatRoomType.PRIVATE -> ChatType.PRIVATE
+//    ChatRoomType.GROUP -> ChatType.GROUP
+//    ChatRoomType.CHAT_BOT -> ChatType.PRIVATE
+//}

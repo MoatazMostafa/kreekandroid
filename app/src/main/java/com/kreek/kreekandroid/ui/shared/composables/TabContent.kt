@@ -68,7 +68,7 @@ fun TabContent(
 fun TabContentPreview() {
     KreekandroidTheme {
         TabContent(
-            tabsList = listOf("Patients", "Updates", "Profile"),
+            tabsList = listOf("Patients", "Direct Messages"),
             selectedTabIndex = 0,
             onTabClick = { }
         )

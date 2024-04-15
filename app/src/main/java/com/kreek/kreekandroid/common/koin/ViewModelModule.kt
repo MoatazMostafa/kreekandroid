@@ -1,10 +1,12 @@
 package com.kreek.kreekandroid.common.koin
 
 import android.os.Bundle
+import com.kreek.kreekandroid.ui.features.authentication.AuthenticationViewModel
+import com.kreek.kreekandroid.ui.features.chatroom.ChatRoomViewModel
 import com.kreek.kreekandroid.ui.features.home.HomeViewModel
 import com.kreek.kreekandroid.ui.features.host.MainViewModel
-import com.kreek.kreekandroid.ui.features.chatroom.ChatRoomViewModel
 import com.kreek.kreekandroid.ui.features.patientinfo.PatientInfoViewModel
+import com.kreek.kreekandroid.ui.features.selectdoctorchat.SelectDoctorChatViewModel
 import com.kreek.kreekandroid.ui.features.splash.SplashViewModel
 import org.koin.android.ext.koin.androidApplication
 import org.koin.androidx.viewmodel.dsl.viewModel
@@ -21,11 +23,18 @@ val viewModelModule = module {
 
 
     viewModel {
-        SplashViewModel(application = androidApplication())
+        SplashViewModel(
+            application = androidApplication(),
+            getCachedDoctorUseCase = get()
+        )
     }
 
     viewModel {
-        HomeViewModel(application = androidApplication())
+        HomeViewModel(
+            application = androidApplication(),
+            getCachedDoctorUseCase = get(),
+            getDoctorChatListUseCase = get()
+        )
     }
 
     viewModel { (arguments: Bundle?) ->
@@ -36,7 +45,11 @@ val viewModelModule = module {
             receiveChatMessageUseCase = get(),
             cacheLastMessageTimestampUseCase = get(),
             getCachedLastMessageTimestampUseCase = get(),
-            getVectaraQueryResponseUseCase = get ()
+            getVectaraQueryResponseUseCase = get(),
+            getCachedDoctorUseCase = get(),
+            getChatDataByRoomIdUseCase = get(),
+            getDoctorUseCase = get(),
+            getPatientUseCase = get()
         )
     }
 
@@ -44,6 +57,24 @@ val viewModelModule = module {
         PatientInfoViewModel(
             application = androidApplication(),
             backStackEntryArguments = arguments
+        )
+    }
+
+    viewModel {
+        SelectDoctorChatViewModel(
+            application = androidApplication(),
+            getDoctorListUseCase = get(),
+            addChatRoomInfoUseCase = get(),
+            getCachedDoctorUseCase = get()
+        )
+    }
+
+    viewModel {
+        AuthenticationViewModel(
+            application = androidApplication(),
+            getDoctorByNumberUseCase = get(),
+            setDoctorUseCase = get(),
+            cacheDoctorUseCase = get()
         )
     }
 }

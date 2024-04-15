@@ -30,7 +30,8 @@ enum class ChatMessageType(val value: String) {
 
 enum class ChatType(val value: String) {
     PRIVATE("private"),
-    GROUP("group");
+    GROUP("group"),
+    VECTARA_CHAT_BOT("vectara_chat_bot");
 
     companion object {
         fun fromString(value: String): ChatType {
@@ -49,9 +50,7 @@ fun mapSnapshotToChatMessage(snapshot: DataSnapshot): ChatMessage {
     val timestamp = snapshot.child("timestamp").getValue(Long::class.java)
     val messageType = snapshot.child("messageType").getValue(String::class.java)
     val chatType = snapshot.child("chatType").getValue(String::class.java)
-//    val receiverId = snapshot.child("receiverId").children.associate {
-//        it.key!! to it.getValue(String::class.java)!!
-//    }
+
     return ChatMessage(
         senderId = senderId ?: "",
         chatRoomId = chatRoomId ?: "",

@@ -31,12 +31,13 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.kreek.kreekandroid.R
+import com.kreek.kreekandroid.data.firebase.chatmessage.model.ChatType
 import com.kreek.kreekandroid.ui.features.chatroom.model.ChatMessageUIModel
-import com.kreek.kreekandroid.ui.features.chatroom.model.ChatRoomType
 import com.kreek.kreekandroid.ui.shared.composables.CircleShapeButton
 import com.kreek.kreekandroid.ui.shared.composables.CircleShapeIcon
+import com.kreek.kreekandroid.ui.shared.uimodel.DoctorUIModel
 import com.kreek.kreekandroid.ui.shared.uimodel.PatientUIModel
-import com.kreek.kreekandroid.ui.shared.uimodel.getIconResource
+import com.kreek.kreekandroid.ui.shared.uimodel.getMockMessages
 import com.kreek.kreekandroid.ui.shared.uimodel.getMockPatient
 import com.kreek.kreekandroid.ui.theme.Black
 import com.kreek.kreekandroid.ui.theme.KreekandroidTheme
@@ -44,11 +45,12 @@ import com.kreek.kreekandroid.ui.theme.TypographyCustom
 import com.kreek.kreekandroid.ui.theme.White
 
 @Composable
-fun PatientChatRoomContent(
+fun ChatRoomContent(
     modifier: Modifier = Modifier,
-    patient: PatientUIModel,
-    userId: String,
-    chatRoomType: ChatRoomType,
+    patient: PatientUIModel?,
+    doctorReceiver: DoctorUIModel?,
+    chatType: ChatType,
+    senderId: String,
     messages: List<ChatMessageUIModel>,
     onSendMessage: (String) -> Unit,
     onPatientInfoClicked: () -> Unit,
@@ -56,40 +58,67 @@ fun PatientChatRoomContent(
 
     Column(Modifier.fillMaxSize()) {
         Row(modifier = modifier
+            .padding(bottom = 8.dp)
             .fillMaxWidth()
             .background(MaterialTheme.colorScheme.background)
             .clickable { onPatientInfoClicked() }) {
             CircleShapeIcon(
-                icon = if (chatRoomType == ChatRoomType.CHAT_BOT) {
-                    R.drawable.ic_chat_bot
-                } else {
-                    patient.patientDiagnosis.getIconResource()
+                icon = when (chatType) {
+                    ChatType.VECTARA_CHAT_BOT -> {
+                        R.drawable.ic_chat_bot
+                    }
+
+                    ChatType.PRIVATE -> {
+                        R.drawable.ic_doctor
+                    }
+
+                    ChatType.GROUP -> {
+                        R.drawable.ic_lying_patient
+                    }
                 }
             )
             Spacer(modifier = Modifier.width(16.dp))
-            if (chatRoomType == ChatRoomType.CHAT_BOT) {
-                Text(
-                    modifier = Modifier.align(Alignment.CenterVertically),
-                    text = "Chat with Kreek AI",
-                    style = TypographyCustom.headlineXSmall,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-            } else {
-                Column(modifier = Modifier.padding(top = 8.dp)) {
-
+            when (chatType) {
+                ChatType.VECTARA_CHAT_BOT -> {
                     Text(
-                        text = patient.name,
+                        modifier = Modifier.align(Alignment.CenterVertically),
+                        text = "Chat with Kreek AI",
                         style = TypographyCustom.headlineXSmall,
                         color = MaterialTheme.colorScheme.onSurface
                     )
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Text(
-                        text = stringResource(R.string.tap_here_for_more_info),
-                        style = TypographyCustom.bodyXSmall,
-                        color = MaterialTheme.colorScheme.onBackground
-                    )
                 }
-                Spacer(modifier = Modifier.height(16.dp))
+
+                ChatType.PRIVATE -> {
+                    Column(modifier = Modifier.align(Alignment.CenterVertically)){
+                        Text(
+                            text = doctorReceiver?.name ?: "",
+                            style = TypographyCustom.headlineXSmall,
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text(
+                            text = doctorReceiver?.speciality ?: "",
+                            style = TypographyCustom.bodyXSmall,
+                            color = MaterialTheme.colorScheme.onBackground
+                        )
+                    }
+                }
+
+                ChatType.GROUP -> {
+                    Column(modifier = Modifier.align(Alignment.CenterVertically)) {
+                        Text(
+                            text = patient?.patientData?.name ?: "",
+                            style = TypographyCustom.headlineXSmall,
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text(
+                            text = stringResource(R.string.tap_here_for_more_info),
+                            style = TypographyCustom.bodyXSmall,
+                            color = MaterialTheme.colorScheme.onBackground
+                        )
+                    }
+                }
             }
         }
         Column(
@@ -99,9 +128,9 @@ fun PatientChatRoomContent(
                 .weight(1f)
                 .background(MaterialTheme.colorScheme.surfaceContainer)
                 .padding(top = 16.dp)
-        ) { // Content area
+        ) {
             messages.forEach {
-                if (it.senderId == userId) {
+                if (it.senderId == senderId) {
                     Box(
                         Modifier
                             .padding(start = 52.dp, end = 16.dp)
@@ -187,32 +216,14 @@ fun PatientChatRoomContent(
 @Composable
 fun PatientChatRoomContentPreview() {
     KreekandroidTheme {
-        PatientChatRoomContent(
+        ChatRoomContent(
             patient = getMockPatient(),
-            userId = "1",
-            messages = listOf(
-                ChatMessageUIModel(
-                    "1",
-                    "",
-                    "1",
-                    "1",
-                    "1",
-                    "indications of chest tube",
-                    1,
-                ),
-                ChatMessageUIModel(
-                    "2",
-                    "",
-                    "1",
-                    "1",
-                    "1",
-                    "Chest tube insertion is indicated in various situations such as tension pneumothorax, hemothorax, and empyema. In tension pneumothorax, chest tube insertion is mandatory following needle decompression [7]. Massive traumatic hemothorax requires chest tube placement to decompress the chest cavity and restore blood volume [9]. In cases of empyema, treatment involves antibiotic medication combined with early chest tube placement and instillation of fibrinolytics or early video-assisted thoracoscopic surgery [10]. Proper placement of chest tubes is crucial to avoid complications, and they should be inserted in specific locations to prevent injury to underlying structures [5]. It is essential to involve a pediatric or thoracic surgeon early in the management of these conditions [10]",
-                    1,
-                )
-            ),
+            doctorReceiver = null,
+            chatType = ChatType.VECTARA_CHAT_BOT,
+            messages = getMockMessages(),
             onSendMessage = {},
             onPatientInfoClicked = {},
-            chatRoomType = ChatRoomType.CHAT_BOT
+            senderId = "1"
         )
     }
 }

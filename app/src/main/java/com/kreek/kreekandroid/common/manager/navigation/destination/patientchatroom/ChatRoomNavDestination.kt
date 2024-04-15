@@ -14,38 +14,38 @@ object ChatRoomNavDestination : NavComposableDestination {
     private const val name = "chatRoom"
 
     override val navComposableDestination =
-        name.plus("/{${ChatRoomArguments.CHAT_ROOM_ID}}/{${ChatRoomArguments.CHAT_ROOM_TYPE}}")
+        name.plus("/{${ChatRoomArguments.CHAT_ROOM_ID}}/{${ChatRoomArguments.CHAT_TYPE}}")
 
     override fun getArguments(): List<NamedNavArgument> = listOf(
         navArgument(name = ChatRoomArguments.CHAT_ROOM_ID) {
             type = NavType.StringType
         },
-        navArgument(name = ChatRoomArguments.CHAT_ROOM_TYPE) {
+        navArgument(name = ChatRoomArguments.CHAT_TYPE) {
             type = NavType.StringType
         },
     )
 
     open class ChatRoomArgumentsData(
         val chatRoomId: String,
-        val chatRoomType: String = "private"
+        val chatType: String = "private"
     )
 
     fun parseArguments(arguments: Bundle?): ChatRoomArgumentsData =
         ChatRoomArgumentsData(
             chatRoomId = arguments?.getString(ChatRoomArguments.CHAT_ROOM_ID)
                 ?.decodeUrl() ?: "",
-            chatRoomType = arguments?.getString(ChatRoomArguments.CHAT_ROOM_TYPE)
+            chatType = arguments?.getString(ChatRoomArguments.CHAT_TYPE)
                 ?.decodeUrl() ?: "private",
         )
 
 
-    fun getNavigationRoute(chatRoomId: String = "", chatRoomType: String = "private") =
+    fun getNavigationRoute(chatRoomId: String = "", chatType: String = "private") =
         object : Route {
             override val route = name
                 .plus("/")
                 .plus(chatRoomId.encodeUrl())
                 .plus("/")
-                .plus(chatRoomType.encodeUrl())
+                .plus(chatType.encodeUrl())
         }
 
 

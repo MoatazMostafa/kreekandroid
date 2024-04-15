@@ -6,11 +6,12 @@ data class DoctorDomainModel(
     val id: String,
     val name: String,
     val mobileNumber: String,
-    val email: String,
-    val profilePic: String,
+    val email: String = "",
+    val profilePic: String = "",
     val speciality: String,
-    val privetChatRoomIds: List<String>,
-    val groupChatRoomIds: List<String>
+    val degree: String,
+    val department: String = "",
+    val hospital: String = "",
 )
 
 fun DoctorDomainModel.toDataModel(): Doctor =
@@ -21,8 +22,9 @@ fun DoctorDomainModel.toDataModel(): Doctor =
         email = email,
         profilePic = profilePic,
         speciality = speciality,
-        privetChatRoomIds = privetChatRoomIds,
-        groupChatRoomIds = groupChatRoomIds
+        degree = degree,
+        department = department,
+        hospital = hospital,
     )
 
 fun Doctor.toDomainModel(): DoctorDomainModel =
@@ -33,6 +35,6 @@ fun Doctor.toDomainModel(): DoctorDomainModel =
         email = email,
         profilePic = profilePic,
         speciality = speciality,
-        privetChatRoomIds = privetChatRoomIds,
-        groupChatRoomIds = groupChatRoomIds
+        degree = degree,
+        department = department,
     )

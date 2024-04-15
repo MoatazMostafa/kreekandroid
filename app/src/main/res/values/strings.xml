@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">kreekandroid</string>
+    <string name="app_name">Kreek Demo</string>
 
     <!--Sheared-->
     <string name="ok">"OK"</string>
@@ -12,4 +12,18 @@
     <string name="http_error_unknown_backend_exception">"Unknown_Server Exception"</string>
     <string name="search">Search</string>
     <string name="tap_here_for_more_info">tap here for more info</string>
+    <string name="verify_number_welcome">Welcome to Kreekapp</string>
+    <string name="verify_number_start">Let’s get started with your mobile number</string>
+    <string name="verify_number_mobile_number">Mobile number</string>
+    <string name="verify_number_enter_your_mobile_number">Enter your mobile number</string>
+    <string name="verify_number_login_button">Login</string>
+    <string name="create_doctor_sign_up_button">Sign Up</string>
+    <string name="enter_your_email">Enter Your Email</string>
+    <string name="email">Email</string>
+    <string name="enter_your_specialization">Enter Your Specialization</string>
+    <string name="specialization">Specialization</string>
+    <string name="enter_your_degree">Enter Your Degree</string>
+    <string name="degree">Degree</string>
+    <string name="enter_your_name">Enter Your Name</string>
+    <string name="doctor_name">Doctor Name</string>
 </resources>

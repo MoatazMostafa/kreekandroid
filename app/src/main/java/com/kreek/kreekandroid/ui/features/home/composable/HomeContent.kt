@@ -20,25 +20,28 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.kreek.kreekandroid.R
+import com.kreek.kreekandroid.ui.shared.uimodel.ChatData
+import com.kreek.kreekandroid.ui.features.home.model.HomeTab
 import com.kreek.kreekandroid.ui.shared.composables.CircleShapeIcon
 import com.kreek.kreekandroid.ui.shared.composables.CustomEditText
 import com.kreek.kreekandroid.ui.shared.composables.TabContent
-import com.kreek.kreekandroid.ui.shared.uimodel.PatientUIModel
 import com.kreek.kreekandroid.ui.theme.KreekandroidTheme
 import com.kreek.kreekandroid.ui.theme.LightGray
 
 @Composable
 fun HomeContent(
     modifier: Modifier = Modifier,
-    patientList: List<PatientUIModel>,
+    groupChatRoomsList: List<ChatData>,
+    privateChatRoomsList: List<ChatData>,
     tabs: List<String>,
-    selectedTabIndex: Int,
-    onTabClick: (Int) -> Unit,
+    selectedTabIndex: HomeTab,
+    onTabClick: (HomeTab) -> Unit,
     onSearchTextChanged: (String) -> Unit,
-    onPatientClick: (PatientUIModel) -> Unit,
-    onFloatingButtonClick: () -> Unit
-) {
+    onChatDataClick: (ChatData) -> Unit,
+    onFloatingButtonClick: () -> Unit,
+    ) {
     val searchText = remember { mutableStateOf("") }
+    val selectedTab = remember { mutableStateOf(selectedTabIndex) }
     Surface(modifier = modifier) {
         Scaffold(
             floatingActionButton = {
@@ -59,8 +62,11 @@ fun HomeContent(
 
                     TabContent(
                         tabsList = tabs,
-                        selectedTabIndex = selectedTabIndex,
-                        onTabClick = onTabClick
+                        selectedTabIndex = selectedTab.value.index,
+                        onTabClick = {
+                            selectedTab.value = HomeTab.fromIndex(it)
+                            onTabClick(selectedTab.value)
+                        }
                     )
 
                     Spacer(modifier = Modifier.height(16.dp))
@@ -71,13 +77,26 @@ fun HomeContent(
                     )
                     onSearchTextChanged(searchText.value)
                     Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
-                        patientList.forEach {
-                            PatientItemContent(patient = it, onPatientClick = onPatientClick)
-                            HorizontalDivider(color = LightGray)
+                        if (selectedTab.value == HomeTab.GROUP_CHATS) {
+                            groupChatRoomsList.forEach {
+                                ChatDataItemContent(
+                                    chatData = it,
+                                    onChatDataClick = onChatDataClick
+                                )
+                                HorizontalDivider(color = LightGray)
+                            }
+                        } else if (selectedTab.value == HomeTab.PRIVATE_CHATS) {
+                            privateChatRoomsList.forEach {
+                                ChatDataItemContent(
+                                    chatData = it,
+                                    onChatDataClick = onChatDataClick
+                                )
+                                HorizontalDivider(color = LightGray)
+                            }
                         }
                     }
-
                 }
+
             })
     }
 }
@@ -88,13 +107,14 @@ fun HomeContent(
 fun HomeContentPreview() {
     KreekandroidTheme {
         HomeContent(
-            patientList = emptyList(),
-            tabs = listOf("Patients", "Updates", "Profile"),
-            selectedTabIndex = 0,
+            groupChatRoomsList = emptyList(),
+            privateChatRoomsList = emptyList(),
+            tabs = listOf("Patients", "Direct Messages"),
             onTabClick = { },
             onSearchTextChanged = { },
-            onPatientClick = { },
-            onFloatingButtonClick = {}
+            onChatDataClick = { },
+            onFloatingButtonClick = {},
+            selectedTabIndex = HomeTab.GROUP_CHATS
         )
     }
 }

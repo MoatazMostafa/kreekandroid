@@ -8,4 +8,6 @@ object PreferencesKeys {
 
     val LAST_MESSAGE_TIMESTAMP = longPreferencesKey("last_message_timestamp")
     val DOCTOR = stringPreferencesKey("doctor")
+    val CHAT_MESSAGES = stringPreferencesKey("chat_messages")
+    val CHAT_ROOM_INFO_LIST = stringPreferencesKey("chat_room_info_list")
 }

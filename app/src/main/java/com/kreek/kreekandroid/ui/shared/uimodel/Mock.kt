@@ -1,109 +1,69 @@
 package com.kreek.kreekandroid.ui.shared.uimodel
 
+import com.kreek.kreekandroid.data.firebase.patient.model.PatientGender
+import com.kreek.kreekandroid.ui.features.chatroom.model.ChatMessageUIModel
+
 fun getMockPatient(): PatientUIModel =
     PatientUIModel(
-        name = "Anas Omran",
-        patientId = "0",
+        patientData = getMockPatientData(),
+        medicalHistory = listOf("Medical History 1", "Medical History 2"),
+        examinations = listOf("Examination 1", "Examination 2"),
+        integration = listOf("Integration 1", "Integration 2"),
+        management = listOf("Management 1", "Management 2"),
+    )
+
+fun getMockPatientData(): PatientDataUIModel {
+    return PatientDataUIModel(
+        id = "1",
+        name = "Patient Name",
         age = 25,
-        patientDiagnosis = PatientDiagnosis.Bone,
-        lastMessagesItem = MessageItem(
-            messageText = "Moamen: This patient needs more care and has a critical case to be handled by ...",
-            messageDate = "1/3/2024",
-            messageSenderId = "0",
-            messageSenderName = "Moamen Farouk"
-        ),
-        messagesItemList = mutableListOf(
-            MessageItem(
-                messageText = "Moamen: This patient needs more care and has a critical case to be handled by ...",
-                messageDate = "1/3/2024",
-                messageSenderId = "0",
-                messageSenderName = "Moamen Farouk"
-            ),
-            MessageItem(
-                messageText = "Moamen: This patient needs more care and has a critical case to be handled by ...",
-                messageDate = "1/3/2024",
-                messageSenderId = "1",
-                messageSenderName = "Moamen Farouk"
-            ),
-            MessageItem(
-                messageText = "Moamen: This patient needs more care and has a critical case to be handled by ...",
-                messageDate = "1/3/2024",
-                messageSenderId = "0",
-                messageSenderName = "Moamen Farouk"
-            ),
-            MessageItem(
-                messageText = "Moamen: This patient needs more care and has a critical case to be handled by ...",
-                messageDate = "1/3/2024",
-                messageSenderId = "1",
-                messageSenderName = "Moamen Farouk"
-            )
-        )
+        dateOfBirth = "01/01/1998",
+        gender = PatientGender.MALE,
+        medicalRecordNumber = "123456",
+        dateOfAdmission = "01/01/2021",
+        attendingPhysician = "Dr. Attending Physician",
+        mobileNumber = "1234567890",
+        nationalId = "0987654321",
+        email = ""
     )
-
-
-fun getMockPatientList(): List<PatientUIModel> =
-    listOf(
-        PatientUIModel(
-            name = "Anas Omran",
-            patientId = "0",
-            age = 25,
-            patientDiagnosis = PatientDiagnosis.Bone,
-            lastMessagesItem = MessageItem(
-                messageText = "Moamen: This patient needs more care and has a critical case to be handled by ...",
-                messageDate = "1/3/2024",
-                messageSenderId = "0",
-                messageSenderName = "Moamen Farouk"
-            )
+}
+fun getMockMessages(): List<ChatMessageUIModel> {
+    return listOf(
+        ChatMessageUIModel(
+            senderId = "1",
+            chatRoomId = "1",
+            senderName = "Sender Name",
+            receiverId = "2",
+            patientId = "1",
+            message = "Message 1",
+            timestamp = 1620000000000,
         ),
-        PatientUIModel(
-            name = "Khaled Mohsen",
-            patientId = "0",
-            age = 40,
-            patientDiagnosis = PatientDiagnosis.Chest,
-            lastMessagesItem = MessageItem(
-                messageText = "Moamen: This patient needs more care and has a critical case to be handled by ...",
-                messageDate = "1/3/2024",
-                messageSenderId = "0",
-                messageSenderName = "Moamen Farouk"
-            )
+        ChatMessageUIModel(
+            senderId = "2",
+            chatRoomId = "1",
+            senderName = "Sender Name",
+            receiverId = "1",
+            patientId = "1",
+            message = "Message 2",
+            timestamp = 1620000000000,
         ),
-        PatientUIModel(
-            name = "Nada Abdelhalim",
-            patientId = "0",
-            age = 35,
-            patientDiagnosis = PatientDiagnosis.Abdomen,
-            lastMessagesItem = MessageItem(
-                messageText = "Moamen: This patient needs more care and has a critical case to be handled by ...",
-                messageDate = "1/3/2024",
-                messageSenderId = "0",
-                messageSenderName = "Moamen Farouk"
-            )
+        ChatMessageUIModel(
+            senderId = "1",
+            chatRoomId = "1",
+            senderName = "Sender Name",
+            receiverId = "2",
+            patientId = "1",
+            message = "Message 3",
+            timestamp = 1620000000000,
         ),
-        PatientUIModel(
-            name = "Mostafa Youssef",
-            patientId = "0",
-            age = 55,
-            patientDiagnosis = PatientDiagnosis.Cardiology,
-            lastMessagesItem = MessageItem(
-                messageText = "Moamen: This patient needs more care and has a critical case to be handled by ...",
-                messageDate = "1/3/2024",
-                messageSenderId = "0",
-                messageSenderName = "Moamen Farouk"
-            )
+        ChatMessageUIModel(
+            senderId = "2",
+            chatRoomId = "1",
+            senderName = "Sender Name",
+            receiverId = "1",
+            patientId = "1",
+            message = "Message 4",
+            timestamp = 1620000000000,
         ),
-        PatientUIModel(
-            name = "Sally Abdelkhaleq",
-            patientId = "0",
-            age = 5,
-            patientDiagnosis = PatientDiagnosis.Pediatric,
-            lastMessagesItem = MessageItem(
-                messageText = "Moamen: This patient needs more care and has a critical case to be handled by ...",
-                messageDate = "1/3/2024",
-                messageSenderId = "0",
-                messageSenderName = "Moamen Farouk"
-            )
-        )
     )
-
-
-
+}

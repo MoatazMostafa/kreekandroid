@@ -2,5 +2,5 @@ package com.kreek.kreekandroid.common.manager.navigation.destination.patientchat
 
 object ChatRoomArguments {
     const val CHAT_ROOM_ID = "chatRoomId"
-    const val CHAT_ROOM_TYPE = "chatRoomType"
+    const val CHAT_TYPE = "chatType"
 }

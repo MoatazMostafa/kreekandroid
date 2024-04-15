@@ -6,11 +6,12 @@ data class Doctor(
     val id: String,
     val name: String,
     val mobileNumber: String,
-    val email: String,
-    val profilePic: String,
+    val email: String = "",
+    val profilePic: String = "",
     val speciality: String,
-    val privetChatRoomIds: List<String>,
-    val groupChatRoomIds: List<String>
+    val degree: String,
+    val department: String = "",
+    val hospital: String = "",
 )
 fun mapToDoctor(document: DocumentSnapshot): Doctor {
     return Doctor(
@@ -20,7 +21,8 @@ fun mapToDoctor(document: DocumentSnapshot): Doctor {
         mobileNumber = document.getString("mobileNumber") ?: "",
         profilePic = document.getString("profilePic") ?: "",
         speciality = document.getString("speciality") ?: "",
-        groupChatRoomIds = document.get("groupChatRoomIds") as? List<String> ?: listOf(),
-        privetChatRoomIds = document.get("privetChatRoomIds") as? List<String> ?: listOf()
+        degree = document.getString("degree") ?: "",
+        department = document.getString("department") ?: "",
+        hospital = document.getString("hospital") ?: "",
     )
 }

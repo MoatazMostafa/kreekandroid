@@ -12,15 +12,16 @@ fun HomeScreen(
     homeViewModel: HomeViewModel
 ) {
     BaseScreen(content = {
-        val tabs = listOf("Patients", "Updates", "Profile")
+        val tabs = listOf("Patients", "Direct Messages")
         HomeContent(
             modifier = modifier,
-            patientList = homeViewModel.patientList.collectAsState().value,
+            groupChatRoomsList = homeViewModel.groupChatRoomsList.collectAsState().value,
+            privateChatRoomsList = homeViewModel.privateChatRoomsList.collectAsState().value,
             tabs = tabs,
-            selectedTabIndex = homeViewModel.selectedTabIndex.collectAsState().value,
+            selectedTabIndex = homeViewModel.selectedTab,
             onTabClick = homeViewModel::onTabSelected,
             onSearchTextChanged = homeViewModel::onSearchTextChanged,
-            onPatientClick = homeViewModel::onPatientClick,
+            onChatDataClick = homeViewModel::onChatDataClick,
             onFloatingButtonClick = homeViewModel::onFloatingButtonClick
         )
     }, viewModel = homeViewModel)

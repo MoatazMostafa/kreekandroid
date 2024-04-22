@@ -1,25 +1,23 @@
 package com.kreek.kreekandroid.common.koin
 
-import com.kreek.kreekandroid.domain.usecases.chatmessage.CacheChatMessagesUseCase
-import com.kreek.kreekandroid.domain.usecases.chatmessage.CacheChatMessagesUseCaseImpl
-import com.kreek.kreekandroid.domain.usecases.chatmessage.GetCachedChatMessagesUseCase
-import com.kreek.kreekandroid.domain.usecases.chatmessage.GetCachedChatMessagesUseCaseImpl
-import com.kreek.kreekandroid.domain.usecases.chatmessage.ReceiveChatMessageUseCase
-import com.kreek.kreekandroid.domain.usecases.chatmessage.ReceiveChatMessageUseCaseImpl
-import com.kreek.kreekandroid.domain.usecases.chatmessage.SendChatMessageUseCase
-import com.kreek.kreekandroid.domain.usecases.chatmessage.SendChatMessageUseCaseImpl
-import com.kreek.kreekandroid.domain.usecases.chatmessage.chatroominfo.AddChatRoomInfoUseCase
-import com.kreek.kreekandroid.domain.usecases.chatmessage.chatroominfo.AddChatRoomInfoUseCaseImpl
-import com.kreek.kreekandroid.domain.usecases.chatmessage.chatroominfo.CacheChatRoomInfoListUseCase
-import com.kreek.kreekandroid.domain.usecases.chatmessage.chatroominfo.CacheChatRoomInfoListUseCaseImpl
-import com.kreek.kreekandroid.domain.usecases.chatmessage.chatroominfo.GetCachedChatRoomInfoListUseCase
-import com.kreek.kreekandroid.domain.usecases.chatmessage.chatroominfo.GetCachedChatRoomInfoListUseCaseImpl
-import com.kreek.kreekandroid.domain.usecases.chatmessage.chatroominfo.GetChatDataByRoomIdUseCase
-import com.kreek.kreekandroid.domain.usecases.chatmessage.chatroominfo.GetChatDataByRoomIdUseCaseImpl
-import com.kreek.kreekandroid.domain.usecases.chatmessage.chatroominfo.GetDoctorChatDataDataListUseCaseImpl
-import com.kreek.kreekandroid.domain.usecases.chatmessage.chatroominfo.GetDoctorChatDataListUseCase
-import com.kreek.kreekandroid.domain.usecases.chatmessage.chatroominfo.UpdateCachedChatRoomInfoUseCase
-import com.kreek.kreekandroid.domain.usecases.chatmessage.chatroominfo.UpdateCachedChatRoomInfoUseCaseImpl
+import com.kreek.kreekandroid.domain.usecases.chat.ReceiveChatMessageUseCase
+import com.kreek.kreekandroid.domain.usecases.chat.ReceiveChatMessageUseCaseImpl
+import com.kreek.kreekandroid.domain.usecases.chat.ReceiveChatRoomsInfoListUseCase
+import com.kreek.kreekandroid.domain.usecases.chat.ReceiveChatRoomsInfoListUseCaseImpl
+import com.kreek.kreekandroid.domain.usecases.chat.SendChatMessageUseCase
+import com.kreek.kreekandroid.domain.usecases.chat.SendChatMessageUseCaseImpl
+import com.kreek.kreekandroid.domain.usecases.chat.SendChatRoomUseCase
+import com.kreek.kreekandroid.domain.usecases.chat.SendChatRoomUseCaseImpl
+import com.kreek.kreekandroid.domain.usecases.chat.local.CacheChatRoomMessagesListUseCase
+import com.kreek.kreekandroid.domain.usecases.chat.local.CacheChatRoomMessagesListUseCaseImpl
+import com.kreek.kreekandroid.domain.usecases.chat.local.CacheChatRoomMessagesUseCase
+import com.kreek.kreekandroid.domain.usecases.chat.local.CacheChatRoomMessagesUseCaseImpl
+import com.kreek.kreekandroid.domain.usecases.chat.local.GetCachedChatRoomMessagesListUseCase
+import com.kreek.kreekandroid.domain.usecases.chat.local.GetCachedChatRoomMessagesListUseCaseImpl
+import com.kreek.kreekandroid.domain.usecases.chat.local.GetCachedChatRoomMessagesUseCase
+import com.kreek.kreekandroid.domain.usecases.chat.local.GetCachedChatRoomMessagesUseCaseImpl
+import com.kreek.kreekandroid.domain.usecases.chat.local.UpdateCachedChatRoomMessages
+import com.kreek.kreekandroid.domain.usecases.chat.local.UpdateCachedChatRoomMessagesImpl
 import com.kreek.kreekandroid.domain.usecases.doctor.CacheDoctorUseCase
 import com.kreek.kreekandroid.domain.usecases.doctor.CacheDoctorUseCaseImpl
 import com.kreek.kreekandroid.domain.usecases.doctor.GetCachedDoctorUseCase
@@ -32,10 +30,6 @@ import com.kreek.kreekandroid.domain.usecases.doctor.GetDoctorUseCase
 import com.kreek.kreekandroid.domain.usecases.doctor.GetDoctorUseCaseImpl
 import com.kreek.kreekandroid.domain.usecases.doctor.SetDoctorUseCase
 import com.kreek.kreekandroid.domain.usecases.doctor.SetDoctorUseCaseImpl
-import com.kreek.kreekandroid.domain.usecases.lastmessagetimestamp.CacheLastMessageTimestampUseCase
-import com.kreek.kreekandroid.domain.usecases.lastmessagetimestamp.CacheLastMessageTimestampUseCaseImpl
-import com.kreek.kreekandroid.domain.usecases.lastmessagetimestamp.GetCachedLastMessageTimestampUseCase
-import com.kreek.kreekandroid.domain.usecases.lastmessagetimestamp.GetCachedLastMessageTimestampUseCaseImpl
 import com.kreek.kreekandroid.domain.usecases.patient.GetPatientUseCase
 import com.kreek.kreekandroid.domain.usecases.patient.GetPatientUseCaseImpl
 import com.kreek.kreekandroid.domain.usecases.vectara.GetVectaraQueryResponseUseCase
@@ -46,21 +40,6 @@ import org.koin.dsl.module
  * This property is used to create UseCases and inject needed parameters
  * */
 val useCaseModule = module {
-    factory<CacheLastMessageTimestampUseCase> {
-        CacheLastMessageTimestampUseCaseImpl(get())
-    }
-
-    factory<GetCachedLastMessageTimestampUseCase> {
-        GetCachedLastMessageTimestampUseCaseImpl(get())
-    }
-
-    factory<SendChatMessageUseCase> {
-        SendChatMessageUseCaseImpl(get())
-    }
-
-    factory<ReceiveChatMessageUseCase> {
-        ReceiveChatMessageUseCaseImpl(get())
-    }
 
     factory<SetDoctorUseCase> {
         SetDoctorUseCaseImpl(get())
@@ -68,14 +47,6 @@ val useCaseModule = module {
 
     factory<GetVectaraQueryResponseUseCase> {
         GetVectaraQueryResponseUseCaseImpl(get())
-    }
-
-    factory<AddChatRoomInfoUseCase> {
-        AddChatRoomInfoUseCaseImpl(get())
-    }
-
-    factory<GetDoctorChatDataListUseCase> {
-        GetDoctorChatDataDataListUseCaseImpl(get())
     }
 
     factory<GetDoctorUseCase> {
@@ -98,31 +69,44 @@ val useCaseModule = module {
         CacheDoctorUseCaseImpl(get())
     }
 
-    factory<GetChatDataByRoomIdUseCase> {
-        GetChatDataByRoomIdUseCaseImpl(get())
-    }
-
     factory<GetPatientUseCase> {
         GetPatientUseCaseImpl(get())
     }
 
-    factory<CacheChatMessagesUseCase> {
-        CacheChatMessagesUseCaseImpl(get())
+    factory<SendChatMessageUseCase> {
+        SendChatMessageUseCaseImpl(get())
     }
 
-    factory<GetCachedChatMessagesUseCase> {
-        GetCachedChatMessagesUseCaseImpl(get())
+    factory<SendChatRoomUseCase> {
+        SendChatRoomUseCaseImpl(get())
     }
 
-    factory<CacheChatRoomInfoListUseCase> {
-        CacheChatRoomInfoListUseCaseImpl(get())
+    factory<ReceiveChatMessageUseCase> {
+        ReceiveChatMessageUseCaseImpl(get())
     }
 
-    factory<GetCachedChatRoomInfoListUseCase> {
-        GetCachedChatRoomInfoListUseCaseImpl(get())
+    factory<ReceiveChatRoomsInfoListUseCase> {
+        ReceiveChatRoomsInfoListUseCaseImpl(get())
     }
 
-    factory<UpdateCachedChatRoomInfoUseCase> {
-        UpdateCachedChatRoomInfoUseCaseImpl(get())
+    factory<UpdateCachedChatRoomMessages> {
+        UpdateCachedChatRoomMessagesImpl(get())
     }
+
+    factory<CacheChatRoomMessagesUseCase> {
+        CacheChatRoomMessagesUseCaseImpl(get())
+    }
+
+    factory<CacheChatRoomMessagesListUseCase> {
+        CacheChatRoomMessagesListUseCaseImpl(get())
+    }
+
+    factory<GetCachedChatRoomMessagesListUseCase> {
+        GetCachedChatRoomMessagesListUseCaseImpl(get())
+    }
+
+    factory<GetCachedChatRoomMessagesUseCase> {
+        GetCachedChatRoomMessagesUseCaseImpl(get())
+    }
+
 }

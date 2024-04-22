@@ -20,13 +20,12 @@ val repositoryModule = module {
             receiveChatMessageDataSource = get(),
             setDoctorDataSource = get(),
             getDoctorDataSource = get(),
-            addChatRoomInfoDataSource = get(),
-            getChatRoomInfoDataSource = get(),
+            sendChatRoomDataSource = get(),
             getDoctorListDataSource = get(),
             getDoctorByNumberDataSource = get(),
-            getChatRoomInfoByIdDataSource = get(),
             getPatientDataSource = get(),
-            setPatientDataSource = get()
+            setPatientDataSource = get(),
+            receiveChatRoomsInfoListDataSource = get()
         )
     }
 

@@ -3,8 +3,8 @@ package com.kreek.kreekandroid.ui.features.selectdoctorchat
 import android.app.Application
 import androidx.lifecycle.viewModelScope
 import com.kreek.kreekandroid.common.manager.navigation.KreekNavDestination
-import com.kreek.kreekandroid.data.firebase.chatmessage.model.ChatType
-import com.kreek.kreekandroid.domain.usecases.chatmessage.chatroominfo.AddChatRoomInfoUseCase
+import com.kreek.kreekandroid.data.firebase.chat.model.ChatType
+import com.kreek.kreekandroid.domain.usecases.chat.SendChatRoomUseCase
 import com.kreek.kreekandroid.domain.usecases.doctor.GetCachedDoctorUseCase
 import com.kreek.kreekandroid.domain.usecases.doctor.GetDoctorListUseCase
 import com.kreek.kreekandroid.ui.shared.base.BaseViewModel
@@ -19,7 +19,7 @@ import kotlinx.coroutines.launch
 class SelectDoctorChatViewModel(
     application: Application,
     private val getDoctorListUseCase: GetDoctorListUseCase,
-    private val addChatRoomInfoUseCase: AddChatRoomInfoUseCase,
+    private val sendChatRoomUseCase: SendChatRoomUseCase,
     private val getCachedDoctorUseCase: GetCachedDoctorUseCase
 ) : BaseViewModel(
     application = application,
@@ -45,20 +45,24 @@ class SelectDoctorChatViewModel(
 
     fun onDoctorClicked(doctor: DoctorUIModel) {
         val chatRoomId = "DM_${userDoctor.id}_${doctor.id}"
-        addChatRoomInfoUseCase(
-            ChatRoomInfoUIModel(
-                userId = userDoctor.id,
-                receiverId = doctor.id,
-                chatRoomId = chatRoomId,
-                chatType = ChatType.PRIVATE,
-                lastMessage = "",
-                lastMessageTimestamp = 0
-            ).toDomainModel()
-        )
-        navController?.popBackStack()
-        navController?.navigate(
-            route = KreekNavDestination.ChatRoom.getNavigationRoute(chatRoomId = chatRoomId).route
-        )
+        viewModelScope.launch {
+            sendChatRoomUseCase(
+                ChatRoomInfoUIModel(
+                    firstUserId = userDoctor.id,
+                    secondUserId = doctor.id,
+                    firstUserName = userDoctor.name,
+                    secondUserName = doctor.name,
+                    firstUserSpeciality = userDoctor.speciality,
+                    secondUserSpeciality = doctor.speciality,
+                    chatRoomId = chatRoomId,
+                    chatType = ChatType.PRIVATE,
+                ).toDomainModel()
+            )
+            navController?.popBackStack()
+            navController?.navigate(
+                route = KreekNavDestination.ChatRoom.getNavigationRoute(chatRoomId = chatRoomId).route
+            )
+        }
     }
 
     fun onSearchTextChanged(searchText: String) {

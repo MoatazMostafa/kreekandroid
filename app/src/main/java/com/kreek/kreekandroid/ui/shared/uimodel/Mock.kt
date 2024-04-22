@@ -1,7 +1,6 @@
 package com.kreek.kreekandroid.ui.shared.uimodel
 
 import com.kreek.kreekandroid.data.firebase.patient.model.PatientGender
-import com.kreek.kreekandroid.ui.features.chatroom.model.ChatMessageUIModel
 
 fun getMockPatient(): PatientUIModel =
     PatientUIModel(
@@ -32,7 +31,6 @@ fun getMockMessages(): List<ChatMessageUIModel> {
         ChatMessageUIModel(
             senderId = "1",
             chatRoomId = "1",
-            senderName = "Sender Name",
             receiverId = "2",
             patientId = "1",
             message = "Message 1",
@@ -41,7 +39,6 @@ fun getMockMessages(): List<ChatMessageUIModel> {
         ChatMessageUIModel(
             senderId = "2",
             chatRoomId = "1",
-            senderName = "Sender Name",
             receiverId = "1",
             patientId = "1",
             message = "Message 2",
@@ -50,7 +47,6 @@ fun getMockMessages(): List<ChatMessageUIModel> {
         ChatMessageUIModel(
             senderId = "1",
             chatRoomId = "1",
-            senderName = "Sender Name",
             receiverId = "2",
             patientId = "1",
             message = "Message 3",
@@ -59,7 +55,6 @@ fun getMockMessages(): List<ChatMessageUIModel> {
         ChatMessageUIModel(
             senderId = "2",
             chatRoomId = "1",
-            senderName = "Sender Name",
             receiverId = "1",
             patientId = "1",
             message = "Message 4",

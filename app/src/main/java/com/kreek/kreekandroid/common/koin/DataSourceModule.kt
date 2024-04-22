@@ -3,16 +3,14 @@ package com.kreek.kreekandroid.common.koin
 
 import com.kreek.kreekandroid.data.datasource.cache.LocalCachedDataSource
 import com.kreek.kreekandroid.data.datasource.cache.LocalCachedDataSourceImpl
-import com.kreek.kreekandroid.data.firebase.chatmessage.addchatroominfo.AddChatRoomInfoDataSource
-import com.kreek.kreekandroid.data.firebase.chatmessage.addchatroominfo.AddChatRoomInfoDataSourceImpl
-import com.kreek.kreekandroid.data.firebase.chatmessage.getchatroominfo.GetChatRoomInfoByIdDataSource
-import com.kreek.kreekandroid.data.firebase.chatmessage.getchatroominfo.GetChatRoomInfoByIdDataSourceImpl
-import com.kreek.kreekandroid.data.firebase.chatmessage.getchatroominfo.GetChatRoomInfoDataSource
-import com.kreek.kreekandroid.data.firebase.chatmessage.getchatroominfo.GetChatRoomInfoDataSourceImpl
-import com.kreek.kreekandroid.data.firebase.chatmessage.receivemessages.ReceiveChatMessageDataSource
-import com.kreek.kreekandroid.data.firebase.chatmessage.receivemessages.ReceiveChatMessageDataSourceImpl
-import com.kreek.kreekandroid.data.firebase.chatmessage.sendmessages.SendChatMessageDataSource
-import com.kreek.kreekandroid.data.firebase.chatmessage.sendmessages.SendChatMessageDataSourceImpl
+import com.kreek.kreekandroid.data.firebase.chat.addchatroom.SendChatRoomDataSource
+import com.kreek.kreekandroid.data.firebase.chat.addchatroom.SendChatRoomDataSourceImpl
+import com.kreek.kreekandroid.data.firebase.chat.getchatroomsIds.ReceiveChatRoomsInfoListDataSource
+import com.kreek.kreekandroid.data.firebase.chat.getchatroomsIds.ReceiveChatRoomsIdsListDataSourceImpl
+import com.kreek.kreekandroid.data.firebase.chat.receivemessages.ReceiveChatMessageDataSource
+import com.kreek.kreekandroid.data.firebase.chat.receivemessages.ReceiveChatMessageDataSourceImpl
+import com.kreek.kreekandroid.data.firebase.chat.sendmessages.SendChatMessageDataSource
+import com.kreek.kreekandroid.data.firebase.chat.sendmessages.SendChatMessageDataSourceImpl
 import com.kreek.kreekandroid.data.firebase.doctor.get.GetDoctorByNumberDataSource
 import com.kreek.kreekandroid.data.firebase.doctor.get.GetDoctorByNumberDataSourceImpl
 import com.kreek.kreekandroid.data.firebase.doctor.get.GetDoctorDataSource
@@ -60,16 +58,12 @@ val dataSourceModule = module {
         GetDoctorListDataSourceImpl()
     }
 
-    single<AddChatRoomInfoDataSource> {
-        AddChatRoomInfoDataSourceImpl()
+    single<SendChatRoomDataSource> {
+        SendChatRoomDataSourceImpl()
     }
 
-    single<GetChatRoomInfoDataSource> {
-        GetChatRoomInfoDataSourceImpl()
-    }
-
-    single<GetChatRoomInfoByIdDataSource> {
-        GetChatRoomInfoByIdDataSourceImpl()
+    single<ReceiveChatRoomsInfoListDataSource> {
+        ReceiveChatRoomsIdsListDataSourceImpl()
     }
 
     single<GetPatientDataSource> {

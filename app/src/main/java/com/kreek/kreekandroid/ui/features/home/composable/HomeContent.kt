@@ -20,25 +20,28 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.kreek.kreekandroid.R
-import com.kreek.kreekandroid.ui.shared.uimodel.ChatData
 import com.kreek.kreekandroid.ui.features.home.model.HomeTab
 import com.kreek.kreekandroid.ui.shared.composables.CircleShapeIcon
 import com.kreek.kreekandroid.ui.shared.composables.CustomEditText
 import com.kreek.kreekandroid.ui.shared.composables.TabContent
+import com.kreek.kreekandroid.ui.shared.uimodel.ChatRoomMessagesUIModel
+import com.kreek.kreekandroid.ui.shared.uimodel.DoctorUIModel
 import com.kreek.kreekandroid.ui.theme.KreekandroidTheme
 import com.kreek.kreekandroid.ui.theme.LightGray
 
 @Composable
 fun HomeContent(
     modifier: Modifier = Modifier,
-    groupChatRoomsList: List<ChatData>,
-    privateChatRoomsList: List<ChatData>,
-    tabs: List<String>,
+    groupChatRoomsList: List<ChatRoomMessagesUIModel>,
+    privateChatRoomsList: List<ChatRoomMessagesUIModel>,
+    userDoctor: DoctorUIModel,
+    tabsList: List<String>,
     selectedTabIndex: HomeTab,
     onTabClick: (HomeTab) -> Unit,
     onSearchTextChanged: (String) -> Unit,
-    onChatDataClick: (ChatData) -> Unit,
+    onChatDataClick: (ChatRoomMessagesUIModel) -> Unit,
     onFloatingButtonClick: () -> Unit,
+
     ) {
     val searchText = remember { mutableStateOf("") }
     val selectedTab = remember { mutableStateOf(selectedTabIndex) }
@@ -61,7 +64,7 @@ fun HomeContent(
                 Column {
 
                     TabContent(
-                        tabsList = tabs,
+                        tabsList = tabsList,
                         selectedTabIndex = selectedTab.value.index,
                         onTabClick = {
                             selectedTab.value = HomeTab.fromIndex(it)
@@ -81,6 +84,7 @@ fun HomeContent(
                             groupChatRoomsList.forEach {
                                 ChatDataItemContent(
                                     chatData = it,
+                                    userDoctor = userDoctor,
                                     onChatDataClick = onChatDataClick
                                 )
                                 HorizontalDivider(color = LightGray)
@@ -89,6 +93,7 @@ fun HomeContent(
                             privateChatRoomsList.forEach {
                                 ChatDataItemContent(
                                     chatData = it,
+                                    userDoctor = userDoctor,
                                     onChatDataClick = onChatDataClick
                                 )
                                 HorizontalDivider(color = LightGray)
@@ -109,12 +114,13 @@ fun HomeContentPreview() {
         HomeContent(
             groupChatRoomsList = emptyList(),
             privateChatRoomsList = emptyList(),
-            tabs = listOf("Patients", "Direct Messages"),
+            tabsList = listOf("Patients", "Direct Messages"),
+            userDoctor = DoctorUIModel(),
+            selectedTabIndex = HomeTab.GROUP_CHATS,
             onTabClick = { },
             onSearchTextChanged = { },
             onChatDataClick = { },
             onFloatingButtonClick = {},
-            selectedTabIndex = HomeTab.GROUP_CHATS
         )
     }
 }

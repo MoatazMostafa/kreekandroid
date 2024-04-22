@@ -33,7 +33,11 @@ val viewModelModule = module {
         HomeViewModel(
             application = androidApplication(),
             getCachedDoctorUseCase = get(),
-            getDoctorChatListUseCase = get()
+            receiveChatRoomsInfoListUseCase = get(),
+            receiveChatMessageUseCase = get(),
+            cacheChatRoomMessagesListUseCase = get(),
+            getCachedChatRoomMessagesListUseCase = get(),
+            updateCachedChatRoomMessages = get()
         )
     }
 
@@ -43,13 +47,10 @@ val viewModelModule = module {
             backStackEntryArguments = arguments,
             sendChatMessageUseCase = get(),
             receiveChatMessageUseCase = get(),
-            cacheLastMessageTimestampUseCase = get(),
-            getCachedLastMessageTimestampUseCase = get(),
+            getCachedChatRoomMessagesUseCase = get(),
+            updateCachedChatRoomMessages = get(),
             getVectaraQueryResponseUseCase = get(),
             getCachedDoctorUseCase = get(),
-            getChatDataByRoomIdUseCase = get(),
-            getDoctorUseCase = get(),
-            getPatientUseCase = get()
         )
     }
 
@@ -64,7 +65,7 @@ val viewModelModule = module {
         SelectDoctorChatViewModel(
             application = androidApplication(),
             getDoctorListUseCase = get(),
-            addChatRoomInfoUseCase = get(),
+            sendChatRoomUseCase = get(),
             getCachedDoctorUseCase = get()
         )
     }

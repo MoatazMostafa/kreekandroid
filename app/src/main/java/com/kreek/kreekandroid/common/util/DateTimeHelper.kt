@@ -11,7 +11,11 @@ fun Long.toDateTimeString(): String {
 }
 
 fun Long.toDateString(): String {
-    val date = Date(this)
-    val format = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-    return format.format(date)
+    return if (this < 0) {
+        val date = Date(this)
+        val format = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+        format.format(date)
+    } else {
+        ""
+    }
 }

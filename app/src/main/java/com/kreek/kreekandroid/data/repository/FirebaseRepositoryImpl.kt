@@ -1,13 +1,12 @@
 package com.kreek.kreekandroid.data.repository
 
-import com.kreek.kreekandroid.data.firebase.chatmessage.addchatroominfo.AddChatRoomInfoDataSource
-import com.kreek.kreekandroid.data.firebase.chatmessage.getchatroominfo.GetChatRoomInfoByIdDataSource
-import com.kreek.kreekandroid.data.firebase.chatmessage.getchatroominfo.GetChatRoomInfoDataSource
-import com.kreek.kreekandroid.data.firebase.chatmessage.model.ChatMessage
-import com.kreek.kreekandroid.data.firebase.chatmessage.model.ChatRoomInfo
-import com.kreek.kreekandroid.data.firebase.chatmessage.model.ChatType
-import com.kreek.kreekandroid.data.firebase.chatmessage.receivemessages.ReceiveChatMessageDataSource
-import com.kreek.kreekandroid.data.firebase.chatmessage.sendmessages.SendChatMessageDataSource
+import com.kreek.kreekandroid.data.firebase.chat.addchatroom.SendChatRoomDataSource
+import com.kreek.kreekandroid.data.firebase.chat.getchatroomsIds.ReceiveChatRoomsInfoListDataSource
+import com.kreek.kreekandroid.data.firebase.chat.model.ChatMessage
+import com.kreek.kreekandroid.data.firebase.chat.model.ChatRoomInfo
+import com.kreek.kreekandroid.data.firebase.chat.model.ChatType
+import com.kreek.kreekandroid.data.firebase.chat.receivemessages.ReceiveChatMessageDataSource
+import com.kreek.kreekandroid.data.firebase.chat.sendmessages.SendChatMessageDataSource
 import com.kreek.kreekandroid.data.firebase.doctor.get.GetDoctorByNumberDataSource
 import com.kreek.kreekandroid.data.firebase.doctor.get.GetDoctorDataSource
 import com.kreek.kreekandroid.data.firebase.doctor.get.GetDoctorListDataSource
@@ -16,14 +15,7 @@ import com.kreek.kreekandroid.data.firebase.doctor.set.SetDoctorDataSource
 import com.kreek.kreekandroid.data.firebase.patient.get.GetPatientDataSource
 import com.kreek.kreekandroid.data.firebase.patient.model.Patient
 import com.kreek.kreekandroid.data.firebase.patient.set.SetPatientDataSource
-import com.kreek.kreekandroid.domain.model.DoctorChatDataDomainModel
-import com.kreek.kreekandroid.domain.model.toDomainModel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.launch
 
 class FirebaseRepositoryImpl(
     private val sendChatMessageDataSource: SendChatMessageDataSource,
@@ -31,50 +23,17 @@ class FirebaseRepositoryImpl(
     private val setDoctorDataSource: SetDoctorDataSource,
     private val getDoctorDataSource: GetDoctorDataSource,
     private val getDoctorListDataSource: GetDoctorListDataSource,
-    private val addChatRoomInfoDataSource: AddChatRoomInfoDataSource,
-    private val getChatRoomInfoDataSource: GetChatRoomInfoDataSource,
-    private val getChatRoomInfoByIdDataSource: GetChatRoomInfoByIdDataSource,
+    private val sendChatRoomDataSource: SendChatRoomDataSource,
+    private val receiveChatRoomsInfoListDataSource: ReceiveChatRoomsInfoListDataSource,
     private val getDoctorByNumberDataSource: GetDoctorByNumberDataSource,
     private val getPatientDataSource: GetPatientDataSource,
     private val setPatientDataSource: SetPatientDataSource,
 ) : FirebaseRepository {
-
-    override suspend fun sendChatMessage(chatMessage: ChatMessage) {
-        sendChatMessageDataSource(chatMessage)
-    }
-
-    override suspend fun receiveChatMessage(
-        chatRoomId: String,
-        chatType: ChatType,
-        lastMessageTimestamp: Long
-    ): Flow<List<ChatMessage>> =
-        receiveChatMessageDataSource(chatRoomId, chatType, lastMessageTimestamp)
-
-    override suspend fun getChatRoomInfo(
-        userId: String,
-        chatType: ChatType
-    ): Flow<List<ChatRoomInfo>> =
-        getChatRoomInfoDataSource(userId, chatType)
-
-    override suspend fun getChatRoomInfoByRoomId(
-        userId: String,
-        chatType: ChatType,
-        chatRoomId: String
-    ): Flow<ChatRoomInfo>  = getChatRoomInfoByIdDataSource(
-        userId = userId,
-        chatType = chatType,
-        chatRoomId = chatRoomId
-    )
-
-    override fun addChatRoomInfo(chatRoomInfo: ChatRoomInfo) {
-        addChatRoomInfoDataSource(chatRoomInfo)
-    }
-
     override suspend fun setPatient(patient: Patient) {
         setPatientDataSource(patient)
     }
 
-    override suspend fun getPatient(patientId:String): Patient {
+    override suspend fun getPatient(patientId: String): Patient {
         return getPatientDataSource(patientId)
     }
 
@@ -90,44 +49,90 @@ class FirebaseRepositoryImpl(
         return getDoctorListDataSource()
     }
 
-    override suspend fun getDoctorByNumber(mobileNumber:String): Doctor? {
+    override suspend fun getDoctorByNumber(mobileNumber: String): Doctor? {
         return getDoctorByNumberDataSource(mobileNumber)
     }
 
-    override suspend fun getDoctorChatDataList(userId: String): Flow<List<DoctorChatDataDomainModel>> {
-        val doctorChatDomainModelFlow = MutableSharedFlow<List<DoctorChatDataDomainModel>>()
-        val job = Job()
-        val scope = CoroutineScope(Dispatchers.IO + job)
 
-        scope.launch {
-            getChatRoomInfo(userId, ChatType.PRIVATE).collect {
-                val doctorChatDomainModelList = mutableListOf<DoctorChatDataDomainModel>()
-                it.forEach { chatRoomInfo ->
-                    if (userId == chatRoomInfo.userId) {
-                        getDoctor(chatRoomInfo.receiverId).let { doctor ->
-                            doctorChatDomainModelList.add(
-                                DoctorChatDataDomainModel(
-                                    chatRoomInfo.toDomainModel(),
-                                    doctor.toDomainModel()
-                                )
-                            )
-                        }
-                    } else {
-                        getDoctor(chatRoomInfo.userId).let { doctor ->
-                            doctorChatDomainModelList.add(
-                                DoctorChatDataDomainModel(
-                                    chatRoomInfo.toDomainModel(),
-                                    doctor.toDomainModel()
-                                )
-                            )
-                        }
-                    }
-                }
-                if(doctorChatDomainModelList.isNotEmpty()) {
-                    doctorChatDomainModelFlow.emit(doctorChatDomainModelList)
-                }
-            }
-        }
-        return doctorChatDomainModelFlow
+//    override suspend fun getChatRoomMessages(
+//        chatRoomId: String,
+//        chatMessageList: List<ChatMessage>
+//    ): ChatRoomMessages {
+//        val chatRoomMessages: ChatRoomMessages =
+//            localCachedDataSource.getChatRoomMessagesByChatRoomId(chatRoomId)
+//                ?: emptyChatRoomMessages()
+//
+//        val lastChatMessage = chatMessageList.last()
+//        chatRoomMessages.chatRoomId =
+//            lastChatMessage.chatRoomId.ifBlank { chatRoomMessages.chatRoomId }
+//        chatRoomMessages.firstUserId =
+//            lastChatMessage.firstUserId.ifBlank { chatRoomMessages.firstUserId }
+//        chatRoomMessages.secondUserId =
+//            lastChatMessage.secondUserId.ifBlank { chatRoomMessages.secondUserId }
+//        chatRoomMessages.firstUserName =
+//            lastChatMessage.firstUserName.ifBlank { chatRoomMessages.firstUserName }
+//        chatRoomMessages.secondUserName =
+//            lastChatMessage.secondUserName.ifBlank { chatRoomMessages.secondUserName }
+//        chatRoomMessages.patientId =
+//            lastChatMessage.patientId.ifBlank { chatRoomMessages.patientId }
+//        chatRoomMessages.patientName =
+//            lastChatMessage.patientName.ifBlank { chatRoomMessages.patientName }
+//        chatRoomMessages.numberOfUnreadMessages += chatMessageList.size
+//        chatRoomMessages.chatType =
+//            lastChatMessage.chatType.ifBlank { chatRoomMessages.chatType }
+//        chatRoomMessages.lastMessage = lastChatMessage.message
+//        chatRoomMessages.lastMessageTimestamp = lastChatMessage.timestamp
+//        chatRoomMessages.chatMessageList.addAll(chatMessageList)
+//        localCachedDataSource.cacheChatRoomMessages(chatRoomMessages)
+//
+//        return chatRoomMessages
+//    }
+//
+//    override suspend fun getChatMessagesList(chatRoomId: String): Flow<List<ChatMessage>> {
+//        val chatRoomMessages: ChatRoomMessages =
+//            localCachedDataSource.getChatRoomMessagesByChatRoomId(chatRoomId)
+//                ?: emptyChatRoomMessages()
+//        return receiveChatMessageDataSource(
+//            chatRoomId = chatRoomId,
+//            chatType = ChatType.fromString(chatRoomMessages.chatType),
+//            lastMessageTimestamp = chatRoomMessages.lastMessageTimestamp ?: 0
+//        )
+//    }
+//
+//    override suspend fun getChatRoomMessagesList(
+//        userId: String,
+//        chatType: ChatType
+//    ): Flow<List<ChatRoomMessages>> {
+//        val job = Job()
+//        val scope = CoroutineScope(Dispatchers.IO + job)
+//        val chatRoomMessagesListFlow = MutableSharedFlow<List<ChatRoomMessages>>()
+//        scope.launch {
+//            chatRoomMessagesListFlow.emit(localCachedDataSource.getChatRoomMessagesList())
+//        }
+//        return chatRoomMessagesListFlow
+//    }
+
+    override suspend fun sendChatMessage(chatMessage: ChatMessage) {
+        sendChatMessageDataSource(chatMessage)
     }
+
+    override suspend fun receiveChatMessage(
+        chatRoomId: String,
+        chatType: ChatType,
+        lastMessageTimestamp: Long
+    ): Flow<List<ChatMessage>> {
+        return receiveChatMessageDataSource(chatRoomId, chatType, lastMessageTimestamp)
+    }
+
+    override suspend fun sendChatRoom(chatRoomInfo: ChatRoomInfo) {
+        sendChatRoomDataSource(chatRoomInfo)
+    }
+
+    override suspend fun receiveChatRoomsInfoList(
+        userId: String,
+        chatType: ChatType
+    ): Flow<List<ChatRoomInfo>> {
+        return receiveChatRoomsInfoListDataSource(userId, chatType)
+    }
+
 }

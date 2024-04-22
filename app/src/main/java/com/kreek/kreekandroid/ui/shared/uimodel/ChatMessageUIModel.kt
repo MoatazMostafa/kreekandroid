@@ -1,11 +1,11 @@
-package com.kreek.kreekandroid.domain.model
+package com.kreek.kreekandroid.ui.shared.uimodel
 
 import com.kreek.kreekandroid.data.firebase.chat.model.ChatMessage
 import com.kreek.kreekandroid.data.firebase.chat.model.ChatMessageType
 import com.kreek.kreekandroid.data.firebase.chat.model.ChatType
+import com.kreek.kreekandroid.domain.model.ChatMessageDomainModel
 
-
-data class ChatMessageDomainModel(
+data class ChatMessageUIModel(
     val chatRoomId: String = "",
     val senderId: String = "",
     val receiverId: String = "",
@@ -21,7 +21,7 @@ data class ChatMessageDomainModel(
     val chatType: ChatType = ChatType.PRIVATE
 )
 
-fun ChatMessageDomainModel.toDataModel() = ChatMessage(
+fun ChatMessageDomainModel.toUIModel() = ChatMessageUIModel(
     chatRoomId = chatRoomId,
     senderId = senderId,
     receiverId = receiverId,
@@ -33,11 +33,27 @@ fun ChatMessageDomainModel.toDataModel() = ChatMessage(
     patientName = patientName,
     message = message,
     timestamp = timestamp,
-    messageType = messageType.value,
-    chatType = chatType.value
+    messageType = messageType,
+    chatType = chatType
 )
 
-fun ChatMessage.toDomainModel() = ChatMessageDomainModel(
+fun ChatMessageUIModel.toDomainModel() = ChatMessageDomainModel(
+    chatRoomId = chatRoomId,
+    senderId = senderId,
+    receiverId = receiverId,
+    firstUserId = firstUserId,
+    secondUserId = secondUserId,
+    firstUserName = firstUserName,
+    secondUserName = secondUserName,
+    patientId = patientId,
+    patientName = patientName,
+    message = message,
+    timestamp = timestamp,
+    messageType = messageType,
+    chatType = chatType
+)
+
+fun ChatMessage.toUIModel() = ChatMessageUIModel(
     chatRoomId = chatRoomId,
     senderId = senderId,
     receiverId = receiverId,

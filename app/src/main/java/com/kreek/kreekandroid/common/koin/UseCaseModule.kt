@@ -8,10 +8,10 @@ import com.kreek.kreekandroid.domain.usecases.chat.SendChatMessageUseCase
 import com.kreek.kreekandroid.domain.usecases.chat.SendChatMessageUseCaseImpl
 import com.kreek.kreekandroid.domain.usecases.chat.SendChatRoomUseCase
 import com.kreek.kreekandroid.domain.usecases.chat.SendChatRoomUseCaseImpl
+import com.kreek.kreekandroid.domain.usecases.chat.local.CacheChatRoomInfoListUseCase
+import com.kreek.kreekandroid.domain.usecases.chat.local.CacheChatRoomInfoListUseCaseImpl
 import com.kreek.kreekandroid.domain.usecases.chat.local.CacheChatRoomMessagesListUseCase
 import com.kreek.kreekandroid.domain.usecases.chat.local.CacheChatRoomMessagesListUseCaseImpl
-import com.kreek.kreekandroid.domain.usecases.chat.local.CacheChatRoomMessagesUseCase
-import com.kreek.kreekandroid.domain.usecases.chat.local.CacheChatRoomMessagesUseCaseImpl
 import com.kreek.kreekandroid.domain.usecases.chat.local.GetCachedChatRoomMessagesListUseCase
 import com.kreek.kreekandroid.domain.usecases.chat.local.GetCachedChatRoomMessagesListUseCaseImpl
 import com.kreek.kreekandroid.domain.usecases.chat.local.GetCachedChatRoomMessagesUseCase
@@ -93,12 +93,12 @@ val useCaseModule = module {
         UpdateCachedChatRoomMessagesImpl(get())
     }
 
-    factory<CacheChatRoomMessagesUseCase> {
-        CacheChatRoomMessagesUseCaseImpl(get())
-    }
-
     factory<CacheChatRoomMessagesListUseCase> {
         CacheChatRoomMessagesListUseCaseImpl(get())
+    }
+
+    factory<CacheChatRoomInfoListUseCase> {
+        CacheChatRoomInfoListUseCaseImpl(get())
     }
 
     factory<GetCachedChatRoomMessagesListUseCase> {

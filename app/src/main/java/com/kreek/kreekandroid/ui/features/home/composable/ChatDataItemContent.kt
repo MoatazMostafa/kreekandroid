@@ -13,10 +13,12 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.kreek.kreekandroid.R
 import com.kreek.kreekandroid.common.util.toDateString
 import com.kreek.kreekandroid.ui.shared.composables.CircleShapeIcon
+import com.kreek.kreekandroid.ui.shared.composables.CircleShapeText
 import com.kreek.kreekandroid.ui.shared.uimodel.ChatRoomMessagesUIModel
 import com.kreek.kreekandroid.ui.shared.uimodel.DoctorUIModel
 import com.kreek.kreekandroid.ui.theme.TypographyCustom
@@ -35,7 +37,7 @@ fun ChatDataItemContent(
         if (chatData.patientId.isBlank()) {
             PrivateItemContent(chatData, userDoctor)
         } else {
-            GroupItemContent(chatData, userDoctor)
+            GroupItemContent(chatData)
         }
     }
 }
@@ -65,11 +67,14 @@ fun PrivateItemContent(
                 style = TypographyCustom.bodyXSmall,
                 color = MaterialTheme.colorScheme.onBackground
             )
+            if (chatData.numberOfUnreadMessages > 0) {
+                CircleShapeText(text = chatData.numberOfUnreadMessages.toString())
+            }
         }
         Spacer(modifier = Modifier.height(8.dp))
         Text(
             text = chatData.lastMessage ?: "",
-            style = MaterialTheme.typography.bodySmall,
+            style = MaterialTheme.typography.bodySmall.copy(fontWeight = if (chatData.numberOfUnreadMessages > 0) FontWeight.Bold else FontWeight.Normal),
             color = MaterialTheme.colorScheme.onBackground
         )
     }
@@ -77,9 +82,7 @@ fun PrivateItemContent(
 
 @Composable
 fun GroupItemContent(
-    chatData: ChatRoomMessagesUIModel,
-    userDoctor: DoctorUIModel
-) {
+    chatData: ChatRoomMessagesUIModel,) {
     CircleShapeIcon(icon = R.drawable.ic_lying_patient)
     Spacer(modifier = Modifier.width(8.dp))
     Column {
@@ -100,7 +103,7 @@ fun GroupItemContent(
         }
         Spacer(modifier = Modifier.height(8.dp))
         Text(
-            text = chatData.lastMessage?:"",
+            text = chatData.lastMessage ?: "",
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onBackground
         )

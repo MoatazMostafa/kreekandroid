@@ -39,3 +39,17 @@ fun mapSnapshotToChatRoomInfo(snapshot: DataSnapshot): ChatRoomInfo {
         chatType = chatType ?: "",
     )
 }
+
+fun ChatRoomInfo.toChatRoomMessage(): ChatRoomMessages {
+    return  ChatRoomMessages(
+        chatRoomId = chatRoomId,
+        firstUserId = firstUserId,
+        secondUserId = secondUserId,
+        firstUserName = firstUserName,
+        secondUserName = secondUserName,
+        firstUserSpeciality = firstUserSpeciality,
+        secondUserSpeciality = secondUserSpeciality,
+        patientId = patientId,
+        patientName = patientName,
+    )
+}

@@ -93,11 +93,14 @@ fun ChatRoomContent(
                             color = MaterialTheme.colorScheme.onSurface
                         )
                         Spacer(modifier = Modifier.height(4.dp))
-//                        Text(
-//                            text = doctorReceiver?.speciality ?: "",
-//                            style = TypographyCustom.bodyXSmall,
-//                            color = MaterialTheme.colorScheme.onBackground
-//                        )
+                        Text(
+                            text = if (userDoctor.id == chatRoomMessages.firstUserId)
+                                chatRoomMessages.secondUserSpeciality
+                            else
+                                chatRoomMessages.firstUserSpeciality,
+                            style = TypographyCustom.bodyXSmall,
+                            color = MaterialTheme.colorScheme.onBackground
+                        )
                     }
                 }
 
@@ -181,6 +184,7 @@ fun ChatRoomContent(
                     onValueChange = { text.value = it },
                     shape = RoundedCornerShape(34.dp),
                     label = { Text("") },
+                    maxLines = 1,
                     colors = OutlinedTextFieldDefaults.colors().copy(
                         focusedIndicatorColor = MaterialTheme.colorScheme.onSurface,
                         unfocusedIndicatorColor = MaterialTheme.colorScheme.onBackground,
@@ -217,7 +221,7 @@ fun PatientChatRoomContentPreview() {
             modifier = Modifier,
             chatRoomMessages = ChatRoomMessagesUIModel(),
             userDoctor = DoctorUIModel(),
-            onSendMessage = {  },
+            onSendMessage = { },
             onPatientInfoClicked = { },
         )
     }

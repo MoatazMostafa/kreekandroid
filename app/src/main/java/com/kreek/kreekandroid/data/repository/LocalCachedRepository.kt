@@ -9,10 +9,9 @@ import com.kreek.kreekandroid.domain.model.ChatRoomMessagesDomainModel
 interface LocalCachedRepository {
     suspend fun cacheDoctor(doctor: Doctor)
     suspend fun getCacheDoctor(): Doctor?
-
     ////
-    suspend fun cacheChatRoomMessagesList(chatRoomInfo: List<ChatRoomInfoDomainModel>)
-    suspend fun cacheChatRoomMessages(chatRoomMessages: ChatRoomMessages)
+    suspend fun cacheChatRoomInfoList(chatRoomInfo: List<ChatRoomInfoDomainModel>)
+    suspend fun cacheChatRoomMessagesList(chatRoomMessagesList: List<ChatRoomMessagesDomainModel>)
     suspend fun getCachedChatRoomMessagesList(): List<ChatRoomMessages>
     suspend fun getCachedChatRoomMessages(chatRoomId: String): ChatRoomMessagesDomainModel?
     suspend fun updateCachedChatRoomMessages(

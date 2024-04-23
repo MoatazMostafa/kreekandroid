@@ -48,23 +48,27 @@ class ChatRoomViewModel(
 
 
     init {
+
         viewModelScope.launch {
+            _userDoctor.value = getCachedDoctorUseCase()?.toUIModel() ?: DoctorUIModel()
             _chatRoomMessages.value = getCachedChatRoomMessagesUseCase(chatRoomId)?.toUIModel()
                 ?: ChatRoomMessagesUIModel()
+            _chatRoomMessages.value = updateCachedChatRoomMessages(
+                chatRoomId = chatRoomId,
+                numberOfUnreadMessages = 0
+            ).toUIModel()
             receiveChatMessageUseCase(
                 chatRoomId,
                 _chatRoomMessages.value.chatType,
                 chatRoomMessages.value.lastMessageTimestamp
             ).collect {
-                val x = updateCachedChatRoomMessages(
+                _chatRoomMessages.value = updateCachedChatRoomMessages(
                     chatRoomId = chatRoomId,
                     lastMessage = it.lastOrNull()?.message,
                     lastMessageTimestamp = it.lastOrNull()?.timestamp,
                     numberOfUnreadMessages = 0,
                     chatMessageList = it.map { it.toDomainModel() }
                 ).toUIModel()
-
-                _chatRoomMessages.value = x
             }
         }
     }
@@ -72,8 +76,8 @@ class ChatRoomViewModel(
     fun sendMessage(message: String) {
         viewModelScope.launch {
             when (_chatRoomMessages.value.chatType) {
-                ChatType.PRIVATE -> sendMessageGroup(message)
-                ChatType.GROUP -> sendMessageGroup(message)
+                ChatType.PRIVATE -> sendMessageNormal(message)
+                ChatType.GROUP -> sendMessageNormal(message)
                 ChatType.VECTARA_CHAT_BOT -> sendMessageVectaraChatBot(message)
             }
 //
@@ -136,7 +140,7 @@ class ChatRoomViewModel(
         //TODO("Not yet implemented")
     }
 
-    private suspend fun sendMessageGroup(message: String) {
+    private suspend fun sendMessageNormal(message: String) {
         sendChatMessageUseCase.sendChatMessage(
             ChatMessageUIModel(
                 chatRoomId = chatRoomId,
@@ -145,12 +149,6 @@ class ChatRoomViewModel(
                     _chatRoomMessages.value.secondUserId
                 else
                     _chatRoomMessages.value.firstUserId,
-                firstUserId = _chatRoomMessages.value.firstUserId,
-                secondUserId = _chatRoomMessages.value.secondUserId,
-                firstUserName = _chatRoomMessages.value.firstUserName,
-                secondUserName = _chatRoomMessages.value.secondUserName,
-                patientId = _chatRoomMessages.value.patientId,
-                patientName = _chatRoomMessages.value.patientName,
                 message = message,
                 timestamp = System.currentTimeMillis(),
                 messageType = ChatMessageType.TEXT,

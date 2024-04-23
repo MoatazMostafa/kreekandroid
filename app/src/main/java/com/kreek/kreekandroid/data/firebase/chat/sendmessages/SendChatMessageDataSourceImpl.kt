@@ -20,6 +20,4 @@ class SendChatMessageDataSourceImpl : SendChatMessageDataSource {
             reference.child(key).setValue(chatMessage)
         }
     }
-
-
 }

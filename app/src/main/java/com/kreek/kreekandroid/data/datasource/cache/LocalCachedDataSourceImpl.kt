@@ -5,7 +5,9 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.preferencesDataStore
 import com.google.gson.Gson
 import com.kreek.kreekandroid.common.util.PreferencesKeys
+import com.kreek.kreekandroid.data.firebase.chat.model.ChatRoomInfo
 import com.kreek.kreekandroid.data.firebase.chat.model.ChatRoomMessages
+import com.kreek.kreekandroid.data.firebase.chat.model.toChatRoomMessage
 import com.kreek.kreekandroid.data.firebase.doctor.model.Doctor
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
@@ -31,9 +33,10 @@ class LocalCachedDataSourceImpl(context: Context) : LocalCachedDataSource {
     }
 
     // ChatRoomMessages
-    override suspend fun cacheChatRoomMessagesList(chatRoomMessages: List<ChatRoomMessages>) {
+    override suspend fun cacheChatRoomInfoList(chatRoomInfoList: List<ChatRoomInfo>) {
         val cachedChatRoomMessagesList = getChatRoomMessagesList().toMutableList()
-        for (chatRoomMessage in chatRoomMessages) {
+        for (chatRoomInfo in chatRoomInfoList) {
+            val chatRoomMessage = chatRoomInfo.toChatRoomMessage()
             if (chatRoomMessage.chatRoomId.isNotBlank()) {
                 val index =
                     cachedChatRoomMessagesList.indexOfFirst { it.chatRoomId == chatRoomMessage.chatRoomId }
@@ -62,20 +65,46 @@ class LocalCachedDataSourceImpl(context: Context) : LocalCachedDataSource {
             }
         }
     }
+    override suspend fun cacheChatRoomMessagesList(chatRoomMessagesList: List<ChatRoomMessages>) {
+        val cachedChatRoomMessagesList = getChatRoomMessagesList().toMutableList()
+        for (chatRoomMessage in chatRoomMessagesList) {
+            if (chatRoomMessage.chatRoomId.isNotBlank()) {
+                val index =
+                    cachedChatRoomMessagesList.indexOfFirst { it.chatRoomId == chatRoomMessage.chatRoomId }
+                if (index != -1) {
+                    // Update the existing ChatRoomMessages
+                    cachedChatRoomMessagesList[index] = chatRoomMessage
+                } else {
+                    // Add the new ChatRoomMessages
+                    cachedChatRoomMessagesList.add(chatRoomMessage)
+                }
+                // Cache the updated list
+                val chatRoomMessagesJson = gson.toJson(cachedChatRoomMessagesList)
+                dataStore.edit { preferences ->
+                    preferences[PreferencesKeys.CHAT_ROOM_MESSAGES] = chatRoomMessagesJson
+                }
+            }
+        }
+    }
 
     override suspend fun cacheChatRoomMessages(chatRoomMessages: ChatRoomMessages) {
-        val cachedChatRoomMessagesList = getChatRoomMessagesList().toMutableList()
-        val index =
-            cachedChatRoomMessagesList.indexOfFirst { it.chatRoomId == chatRoomMessages.chatRoomId }
-        if (index != -1) {
-            // Update the existing ChatRoomMessages
-            cachedChatRoomMessagesList[index] = chatRoomMessages
-        } else {
-            // Add the new ChatRoomMessages
-            cachedChatRoomMessagesList.add(chatRoomMessages)
+        if (chatRoomMessages.chatRoomId.isNotBlank()) {
+            val cachedChatRoomMessagesList = getChatRoomMessagesList().toMutableList()
+            val index =
+                cachedChatRoomMessagesList.indexOfFirst { it.chatRoomId == chatRoomMessages.chatRoomId }
+            if (index != -1) {
+                // Update the existing ChatRoomMessages
+                cachedChatRoomMessagesList[index] = chatRoomMessages
+            } else {
+                // Add the new ChatRoomMessages
+                cachedChatRoomMessagesList.add(chatRoomMessages)
+            }
+            // Cache the updated list
+            val chatRoomMessagesJson = gson.toJson(cachedChatRoomMessagesList)
+            dataStore.edit { preferences ->
+                preferences[PreferencesKeys.CHAT_ROOM_MESSAGES] = chatRoomMessagesJson
+            }
         }
-        // Cache the updated list
-        cacheChatRoomMessagesList(cachedChatRoomMessagesList)
     }
 
     override suspend fun getChatRoomMessagesList(): List<ChatRoomMessages> {

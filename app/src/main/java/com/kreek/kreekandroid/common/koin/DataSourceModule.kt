@@ -3,10 +3,10 @@ package com.kreek.kreekandroid.common.koin
 
 import com.kreek.kreekandroid.data.datasource.cache.LocalCachedDataSource
 import com.kreek.kreekandroid.data.datasource.cache.LocalCachedDataSourceImpl
-import com.kreek.kreekandroid.data.firebase.chat.addchatroom.SendChatRoomDataSource
-import com.kreek.kreekandroid.data.firebase.chat.addchatroom.SendChatRoomDataSourceImpl
-import com.kreek.kreekandroid.data.firebase.chat.getchatroomsIds.ReceiveChatRoomsInfoListDataSource
-import com.kreek.kreekandroid.data.firebase.chat.getchatroomsIds.ReceiveChatRoomsIdsListDataSourceImpl
+import com.kreek.kreekandroid.data.firebase.chat.sendchatroom.SendChatRoomDataSource
+import com.kreek.kreekandroid.data.firebase.chat.sendchatroom.SendChatRoomDataSourceImpl
+import com.kreek.kreekandroid.data.firebase.chat.receivechatroomslist.ReceiveChatRoomsListDataSource
+import com.kreek.kreekandroid.data.firebase.chat.receivechatroomslist.ReceiveChatRoomsListDataSourceImpl
 import com.kreek.kreekandroid.data.firebase.chat.receivemessages.ReceiveChatMessageDataSource
 import com.kreek.kreekandroid.data.firebase.chat.receivemessages.ReceiveChatMessageDataSourceImpl
 import com.kreek.kreekandroid.data.firebase.chat.sendmessages.SendChatMessageDataSource
@@ -62,8 +62,8 @@ val dataSourceModule = module {
         SendChatRoomDataSourceImpl()
     }
 
-    single<ReceiveChatRoomsInfoListDataSource> {
-        ReceiveChatRoomsIdsListDataSourceImpl()
+    single<ReceiveChatRoomsListDataSource> {
+        ReceiveChatRoomsListDataSourceImpl()
     }
 
     single<GetPatientDataSource> {

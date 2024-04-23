@@ -27,6 +27,7 @@ fun CustomEditText(
     hint: String = "",
     text: MutableState<String> = remember { mutableStateOf("") },
     isError: Boolean = false,
+    maxLines: Int = 1,
     keyboardOptions: KeyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text)
 
 ) {
@@ -39,6 +40,7 @@ fun CustomEditText(
         textStyle = TypographyCustom.bodyRegular,
         isError = isError,
         keyboardOptions = keyboardOptions,
+        maxLines = maxLines,
         colors = TextFieldDefaults.colors(
             unfocusedContainerColor = BackgroundGray,
             focusedContainerColor = BackgroundGray,

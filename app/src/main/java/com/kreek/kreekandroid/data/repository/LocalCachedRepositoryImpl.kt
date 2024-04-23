@@ -7,7 +7,6 @@ import com.kreek.kreekandroid.data.firebase.doctor.model.Doctor
 import com.kreek.kreekandroid.domain.model.ChatMessageDomainModel
 import com.kreek.kreekandroid.domain.model.ChatRoomInfoDomainModel
 import com.kreek.kreekandroid.domain.model.ChatRoomMessagesDomainModel
-import com.kreek.kreekandroid.domain.model.toChatRoomMessage
 import com.kreek.kreekandroid.domain.model.toDataModel
 import com.kreek.kreekandroid.domain.model.toDomainModel
 
@@ -22,13 +21,12 @@ class LocalCachedRepositoryImpl(
         return localCachedDataSource.getCacheDoctor()
     }
 
-    override suspend fun cacheChatRoomMessages(chatRoomMessages: ChatRoomMessages) {
-        localCachedDataSource.cacheChatRoomMessages(chatRoomMessages)
+    override suspend fun cacheChatRoomInfoList(chatRoomInfo: List<ChatRoomInfoDomainModel>) {
+        localCachedDataSource.cacheChatRoomInfoList(chatRoomInfo.map { it.toDataModel() })
     }
 
-    //TODO separate the cacheChatRoomMessagesList and cacheChatRoomInfoList
-    override suspend fun cacheChatRoomMessagesList(chatRoomInfo: List<ChatRoomInfoDomainModel>) {
-        localCachedDataSource.cacheChatRoomMessagesList(chatRoomInfo.map { it.toChatRoomMessage() })
+    override suspend fun cacheChatRoomMessagesList(chatRoomMessagesList: List<ChatRoomMessagesDomainModel>) {
+        localCachedDataSource.cacheChatRoomMessagesList(chatRoomMessagesList.map { it.toDataModel() })
     }
 
     override suspend fun getCachedChatRoomMessagesList(): List<ChatRoomMessages> {

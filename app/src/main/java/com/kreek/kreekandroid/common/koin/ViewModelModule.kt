@@ -35,8 +35,9 @@ val viewModelModule = module {
             getCachedDoctorUseCase = get(),
             receiveChatRoomsInfoListUseCase = get(),
             receiveChatMessageUseCase = get(),
-            cacheChatRoomMessagesListUseCase = get(),
+            cacheChatRoomInfoListUseCase = get(),
             getCachedChatRoomMessagesListUseCase = get(),
+            getCachedChatRoomMessagesUseCase = get(),
             updateCachedChatRoomMessages = get()
         )
     }

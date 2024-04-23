@@ -1,4 +1,4 @@
-package com.kreek.kreekandroid.data.firebase.chat.addchatroom
+package com.kreek.kreekandroid.data.firebase.chat.sendchatroom
 
 import com.kreek.kreekandroid.data.firebase.chat.model.ChatRoomInfo
 

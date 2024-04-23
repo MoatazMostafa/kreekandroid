@@ -1,4 +1,4 @@
-package com.kreek.kreekandroid.data.firebase.chat.getchatroomsIds
+package com.kreek.kreekandroid.data.firebase.chat.receivechatroomslist
 
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -14,7 +14,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
 
-class ReceiveChatRoomsIdsListDataSourceImpl : ReceiveChatRoomsInfoListDataSource {
+class ReceiveChatRoomsListDataSourceImpl : ReceiveChatRoomsListDataSource {
     private val job = Job()
     private val scope = CoroutineScope(Dispatchers.IO + job)
     private val _chatRoomsInfoListFlow = MutableSharedFlow<List<ChatRoomInfo>>()
@@ -28,12 +28,10 @@ class ReceiveChatRoomsIdsListDataSourceImpl : ReceiveChatRoomsInfoListDataSource
         val listener = object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 val chatRoomInfoList = mutableListOf<ChatRoomInfo>()
-
                 for (snapshot in dataSnapshot.children) {
                     val chatRoomInfo = mapSnapshotToChatRoomInfo(snapshot)
                     chatRoomInfoList.add(chatRoomInfo)
                 }
-
                 scope.launch {
                     _chatRoomsInfoListFlow.emit(chatRoomInfoList)
                 }

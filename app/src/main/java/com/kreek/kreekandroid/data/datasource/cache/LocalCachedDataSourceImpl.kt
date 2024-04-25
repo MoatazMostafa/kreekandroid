@@ -5,18 +5,23 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.preferencesDataStore
 import com.google.gson.Gson
 import com.kreek.kreekandroid.common.util.PreferencesKeys
+import com.kreek.kreekandroid.data.firebase.chat.model.ChatMessage
 import com.kreek.kreekandroid.data.firebase.chat.model.ChatRoomInfo
 import com.kreek.kreekandroid.data.firebase.chat.model.ChatRoomMessages
 import com.kreek.kreekandroid.data.firebase.chat.model.toChatRoomMessage
 import com.kreek.kreekandroid.data.firebase.doctor.model.Doctor
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 
 class LocalCachedDataSourceImpl(context: Context) : LocalCachedDataSource {
 
+
     private val Context.dataStore by preferencesDataStore(name = PreferencesKeys.PREFERENCES_NAME)
     private val dataStore = context.dataStore
     private val gson = Gson()
+
+    private val chatRoomMessagesFlow = MutableSharedFlow<List<ChatRoomMessages>>()
 
     override suspend fun cacheDoctor(doctor: Doctor) {
         val doctorJson = gson.toJson(doctor)
@@ -34,7 +39,13 @@ class LocalCachedDataSourceImpl(context: Context) : LocalCachedDataSource {
 
     // ChatRoomMessages
     override suspend fun cacheChatRoomInfoList(chatRoomInfoList: List<ChatRoomInfo>) {
-        val cachedChatRoomMessagesList = getChatRoomMessagesList().toMutableList()
+        var chatRoomMessagesJson = dataStore.data.map { preferences ->
+            preferences[PreferencesKeys.CHAT_ROOM_MESSAGES]
+        }.first()
+        val cachedChatRoomMessagesList = if (chatRoomMessagesJson != null) gson.fromJson(
+            chatRoomMessagesJson,
+            Array<ChatRoomMessages>::class.java
+        ).toMutableList() else mutableListOf()
         for (chatRoomInfo in chatRoomInfoList) {
             val chatRoomMessage = chatRoomInfo.toChatRoomMessage()
             if (chatRoomMessage.chatRoomId.isNotBlank()) {
@@ -42,7 +53,8 @@ class LocalCachedDataSourceImpl(context: Context) : LocalCachedDataSource {
                     cachedChatRoomMessagesList.indexOfFirst { it.chatRoomId == chatRoomMessage.chatRoomId }
                 if (index != -1) {
                     // Update the existing ChatRoomMessages
-                    cachedChatRoomMessagesList[index] = chatRoomMessage
+                    cachedChatRoomMessagesList[index].chatType = chatRoomMessage.chatType
+                    cachedChatRoomMessagesList[index].firstUserId = chatRoomMessage.firstUserId
                     cachedChatRoomMessagesList[index].secondUserId = chatRoomMessage.secondUserId
                     cachedChatRoomMessagesList[index].firstUserName = chatRoomMessage.firstUserName
                     cachedChatRoomMessagesList[index].secondUserName =
@@ -58,15 +70,23 @@ class LocalCachedDataSourceImpl(context: Context) : LocalCachedDataSource {
                     cachedChatRoomMessagesList.add(chatRoomMessage)
                 }
                 // Cache the updated list
-                val chatRoomMessagesJson = gson.toJson(cachedChatRoomMessagesList)
+                chatRoomMessagesFlow.emit(cachedChatRoomMessagesList)
+                chatRoomMessagesJson = gson.toJson(cachedChatRoomMessagesList)
                 dataStore.edit { preferences ->
                     preferences[PreferencesKeys.CHAT_ROOM_MESSAGES] = chatRoomMessagesJson
                 }
             }
         }
     }
+
     override suspend fun cacheChatRoomMessagesList(chatRoomMessagesList: List<ChatRoomMessages>) {
-        val cachedChatRoomMessagesList = getChatRoomMessagesList().toMutableList()
+        var chatRoomMessagesJson = dataStore.data.map { preferences ->
+            preferences[PreferencesKeys.CHAT_ROOM_MESSAGES]
+        }.first()
+        val cachedChatRoomMessagesList = if (chatRoomMessagesJson != null) gson.fromJson(
+            chatRoomMessagesJson,
+            Array<ChatRoomMessages>::class.java
+        ).toMutableList() else mutableListOf()
         for (chatRoomMessage in chatRoomMessagesList) {
             if (chatRoomMessage.chatRoomId.isNotBlank()) {
                 val index =
@@ -79,7 +99,8 @@ class LocalCachedDataSourceImpl(context: Context) : LocalCachedDataSource {
                     cachedChatRoomMessagesList.add(chatRoomMessage)
                 }
                 // Cache the updated list
-                val chatRoomMessagesJson = gson.toJson(cachedChatRoomMessagesList)
+                chatRoomMessagesFlow.emit(cachedChatRoomMessagesList)
+                chatRoomMessagesJson = gson.toJson(cachedChatRoomMessagesList)
                 dataStore.edit { preferences ->
                     preferences[PreferencesKeys.CHAT_ROOM_MESSAGES] = chatRoomMessagesJson
                 }
@@ -89,7 +110,13 @@ class LocalCachedDataSourceImpl(context: Context) : LocalCachedDataSource {
 
     override suspend fun cacheChatRoomMessages(chatRoomMessages: ChatRoomMessages) {
         if (chatRoomMessages.chatRoomId.isNotBlank()) {
-            val cachedChatRoomMessagesList = getChatRoomMessagesList().toMutableList()
+            var chatRoomMessagesJson = dataStore.data.map { preferences ->
+                preferences[PreferencesKeys.CHAT_ROOM_MESSAGES]
+            }.first()
+            val cachedChatRoomMessagesList = if (chatRoomMessagesJson != null) gson.fromJson(
+                chatRoomMessagesJson,
+                Array<ChatRoomMessages>::class.java
+            ).toMutableList() else mutableListOf()
             val index =
                 cachedChatRoomMessagesList.indexOfFirst { it.chatRoomId == chatRoomMessages.chatRoomId }
             if (index != -1) {
@@ -100,11 +127,70 @@ class LocalCachedDataSourceImpl(context: Context) : LocalCachedDataSource {
                 cachedChatRoomMessagesList.add(chatRoomMessages)
             }
             // Cache the updated list
-            val chatRoomMessagesJson = gson.toJson(cachedChatRoomMessagesList)
+            chatRoomMessagesFlow.emit(cachedChatRoomMessagesList)
+            chatRoomMessagesJson = gson.toJson(cachedChatRoomMessagesList)
             dataStore.edit { preferences ->
                 preferences[PreferencesKeys.CHAT_ROOM_MESSAGES] = chatRoomMessagesJson
             }
         }
+    }
+
+    override suspend fun updateChatRoomMessages(
+        chatRoomId: String,
+        lastMessage: String?,
+        lastMessageTimestamp: Long?,
+        numberOfUnreadMessages: Int?,
+        chatMessageList: List<ChatMessage>?
+    ): ChatRoomMessages {
+        var chatRoomMessages = ChatRoomMessages()
+        if (chatRoomId.isNotBlank()) {
+            var chatRoomMessagesJson = dataStore.data.map { preferences ->
+                preferences[PreferencesKeys.CHAT_ROOM_MESSAGES]
+            }.first()
+            val cachedChatRoomMessagesList = if (chatRoomMessagesJson != null) gson.fromJson(
+                chatRoomMessagesJson,
+                Array<ChatRoomMessages>::class.java
+            ).toMutableList() else mutableListOf()
+            val index =
+                cachedChatRoomMessagesList.indexOfFirst { it.chatRoomId == chatRoomId }
+            if (index != -1) {
+                // Update the existing ChatRoomMessages
+                if (lastMessage != null) {
+                    cachedChatRoomMessagesList[index].lastMessage = lastMessage
+                }
+                if (lastMessageTimestamp != null) {
+                    cachedChatRoomMessagesList[index].lastMessageTimestamp = lastMessageTimestamp
+                }
+                if (numberOfUnreadMessages != null) {
+                    cachedChatRoomMessagesList[index].numberOfUnreadMessages =
+                        numberOfUnreadMessages
+                }
+                if (chatMessageList != null) {
+                    cachedChatRoomMessagesList[index].chatMessageList.addAll(chatMessageList)
+                }
+                chatRoomMessages = cachedChatRoomMessagesList[index]
+            } else {
+                // Add the new ChatRoomMessages
+                chatRoomMessages = ChatRoomMessages(
+                    chatRoomId = chatRoomId,
+                    lastMessage = lastMessage,
+                    lastMessageTimestamp = lastMessageTimestamp ?: 0,
+                    numberOfUnreadMessages = numberOfUnreadMessages ?: 0,
+                    chatMessageList = chatMessageList?.toMutableList() ?: mutableListOf(),
+                    secondUserId = "",
+                )
+                cachedChatRoomMessagesList.add(
+                    chatRoomMessages
+                )
+            }
+            // Cache the updated list
+            chatRoomMessagesFlow.emit(cachedChatRoomMessagesList)
+            chatRoomMessagesJson = gson.toJson(cachedChatRoomMessagesList)
+            dataStore.edit { preferences ->
+                preferences[PreferencesKeys.CHAT_ROOM_MESSAGES] = chatRoomMessagesJson
+            }
+        }
+        return chatRoomMessages
     }
 
     override suspend fun getChatRoomMessagesList(): List<ChatRoomMessages> {
@@ -117,8 +203,26 @@ class LocalCachedDataSourceImpl(context: Context) : LocalCachedDataSource {
         ).toList() else emptyList()
     }
 
+    override suspend fun getChatRoomMessagesListFlow(): MutableSharedFlow<List<ChatRoomMessages>> {
+        val chatRoomMessagesJson = dataStore.data.map { preferences ->
+            preferences[PreferencesKeys.CHAT_ROOM_MESSAGES]
+        }.first()
+        val cachedChatRoomMessagesList = if (chatRoomMessagesJson != null) gson.fromJson(
+            chatRoomMessagesJson,
+            Array<ChatRoomMessages>::class.java
+        ).toList() else emptyList()
+        chatRoomMessagesFlow.emit(cachedChatRoomMessagesList)
+        return chatRoomMessagesFlow
+    }
+
     override suspend fun getChatRoomMessages(chatRoomId: String): ChatRoomMessages? {
-        val cachedChatRoomMessagesList = getChatRoomMessagesList()
+        val chatRoomMessagesJson = dataStore.data.map { preferences ->
+            preferences[PreferencesKeys.CHAT_ROOM_MESSAGES]
+        }.first()
+        val cachedChatRoomMessagesList = if (chatRoomMessagesJson != null) gson.fromJson(
+            chatRoomMessagesJson,
+            Array<ChatRoomMessages>::class.java
+        ).toList() else emptyList()
         return cachedChatRoomMessagesList.find { it.chatRoomId == chatRoomId }
     }
 }

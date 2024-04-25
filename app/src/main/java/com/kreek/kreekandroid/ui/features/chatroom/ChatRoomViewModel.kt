@@ -6,9 +6,9 @@ import androidx.lifecycle.viewModelScope
 import com.kreek.kreekandroid.common.manager.navigation.KreekNavDestination
 import com.kreek.kreekandroid.data.firebase.chat.model.ChatMessageType
 import com.kreek.kreekandroid.data.firebase.chat.model.ChatType
-import com.kreek.kreekandroid.domain.model.toDomainModel
-import com.kreek.kreekandroid.domain.usecases.chat.ReceiveChatMessageUseCase
+import com.kreek.kreekandroid.data.vectara.model.VectaraQueryBody
 import com.kreek.kreekandroid.domain.usecases.chat.SendChatMessageUseCase
+import com.kreek.kreekandroid.domain.usecases.chat.local.GetCachedChatRoomMessagesListFlowUseCase
 import com.kreek.kreekandroid.domain.usecases.chat.local.GetCachedChatRoomMessagesUseCase
 import com.kreek.kreekandroid.domain.usecases.chat.local.UpdateCachedChatRoomMessages
 import com.kreek.kreekandroid.domain.usecases.doctor.GetCachedDoctorUseCase
@@ -27,11 +27,11 @@ class ChatRoomViewModel(
     application: Application,
     backStackEntryArguments: Bundle?,
     private val sendChatMessageUseCase: SendChatMessageUseCase,
-    private val receiveChatMessageUseCase: ReceiveChatMessageUseCase,
     private val getCachedChatRoomMessagesUseCase: GetCachedChatRoomMessagesUseCase,
     private val updateCachedChatRoomMessages: UpdateCachedChatRoomMessages,
     private val getVectaraQueryResponseUseCase: GetVectaraQueryResponseUseCase,
     private val getCachedDoctorUseCase: GetCachedDoctorUseCase,
+    private val getCachedChatRoomMessagesListFlow: GetCachedChatRoomMessagesListFlowUseCase
 ) : BaseViewModel(
     application = application,
 ) {
@@ -42,102 +42,94 @@ class ChatRoomViewModel(
     var chatRoomMessages = _chatRoomMessages.asStateFlow()
 
     val chatRoomId: String = _chatRoomArguments.chatRoomId
+    val chatType: ChatType = ChatType.fromString(_chatRoomArguments.chatType)
 
     private val _userDoctor = MutableStateFlow(DoctorUIModel())
     var userDoctor = _userDoctor.asStateFlow()
 
 
     init {
+        fetchChatMessages()
+    }
 
+    private fun fetchChatMessages() {
         viewModelScope.launch {
             _userDoctor.value = getCachedDoctorUseCase()?.toUIModel() ?: DoctorUIModel()
-            _chatRoomMessages.value = getCachedChatRoomMessagesUseCase(chatRoomId)?.toUIModel()
-                ?: ChatRoomMessagesUIModel()
+            _chatRoomMessages.value = getCachedChatRoomMessagesUseCase(chatRoomId)?.toUIModel() ?: ChatRoomMessagesUIModel()
             _chatRoomMessages.value = updateCachedChatRoomMessages(
                 chatRoomId = chatRoomId,
                 numberOfUnreadMessages = 0
             ).toUIModel()
-            receiveChatMessageUseCase(
-                chatRoomId,
-                _chatRoomMessages.value.chatType,
-                chatRoomMessages.value.lastMessageTimestamp
-            ).collect {
-                _chatRoomMessages.value = updateCachedChatRoomMessages(
-                    chatRoomId = chatRoomId,
-                    lastMessage = it.lastOrNull()?.message,
-                    lastMessageTimestamp = it.lastOrNull()?.timestamp,
-                    numberOfUnreadMessages = 0,
-                    chatMessageList = it.map { it.toDomainModel() }
-                ).toUIModel()
+            getCachedChatRoomMessagesListFlow.invoke().collect {
+                _chatRoomMessages.value = it.first { it.chatRoomId == chatRoomId }.toUIModel()
             }
         }
     }
 
     fun sendMessage(message: String) {
         viewModelScope.launch {
-            when (_chatRoomMessages.value.chatType) {
+            when (chatType) {
                 ChatType.PRIVATE -> sendMessageNormal(message)
                 ChatType.GROUP -> sendMessageNormal(message)
                 ChatType.VECTARA_CHAT_BOT -> sendMessageVectaraChatBot(message)
             }
-//
-//            if (chatType != ChatType.VECTARA_CHAT_BOT) {
-//
-//            } else {
-//                var tmpList = _chatMessages.value.toMutableList()
-//                tmpList.add(
-//                    ChatMessageUIModel(
-//                        senderId = "1",
-//                        senderName = "",
-//                        message = message,
-//                        receiverId = "",
-//                        patientId = "",
-//                        timestamp = 0L,
-//                        chatRoomId = ""
-//                    )
-//                )
-//                _chatMessages.value = tmpList
-//                val x = getVectaraQueryResponseUseCase(
-//                    VectaraQueryBody(
-//                        listOf(
-//                            VectaraQueryBody.Query(
-//                                query = message,
-//                                start = 0,
-//                                numResults = 10,
-//                                corpusKey = listOf(
-//                                    VectaraQueryBody.Query.CorpusKey(
-//                                        corpusId = 2
-//                                    )
-//                                ),
-//                                summary = listOf(
-//                                    VectaraQueryBody.Query.Summary(
-//                                        maxSummarizedResults = 10,
-//                                        responseLang = "en"
-//                                    )
-//                                )
-//                            )
-//                        )
-//                    )
-//                )
-//                tmpList = _chatMessages.value.toMutableList()
-//                tmpList.add(
-//                    ChatMessageUIModel(
-//                        senderId = "2",
-//                        senderName = "",
-//                        message = x?.responseSet?.first()?.summary?.first()?.text ?: "",
-//                        receiverId = "",
-//                        patientId = "",
-//                        timestamp = 0L,
-//                        chatRoomId = ""
-//                    )
-//                )
-//                _chatMessages.value = tmpList
-//            }
         }
     }
 
     private fun sendMessageVectaraChatBot(message: String) {
-        //TODO("Not yet implemented")
+        viewModelScope.launch {
+            var chatMessageUIModel = ChatMessageUIModel(
+                senderId = userDoctor.value.id,
+                receiverId = _chatRoomMessages.value.secondUserId,
+                message = message,
+                timestamp = System.currentTimeMillis(),
+                chatType = chatType,
+                chatRoomId = chatRoomId,
+            )
+            _chatRoomMessages.value = updateCachedChatRoomMessages(
+                chatRoomId = chatRoomId,
+                numberOfUnreadMessages = 0,
+                chatMessageList = listOf(chatMessageUIModel.toDomainModel())
+            ).toUIModel()
+            sendChatMessageUseCase.sendChatMessage(chatMessageUIModel.toDomainModel())
+            val vectaraQueryResponse = getVectaraQueryResponseUseCase(
+                VectaraQueryBody(
+                    listOf(
+                        VectaraQueryBody.Query(
+                            query = message,
+                            start = 0,
+                            numResults = 10,
+                            corpusKey = listOf(
+                                VectaraQueryBody.Query.CorpusKey(
+                                    corpusId = 2
+                                )
+                            ),
+                            summary = listOf(
+                                VectaraQueryBody.Query.Summary(
+                                    maxSummarizedResults = 10,
+                                    responseLang = "en"
+                                )
+                            )
+                        )
+                    )
+                )
+            )
+            chatMessageUIModel = ChatMessageUIModel(
+                senderId = _chatRoomMessages.value.secondUserId,
+                receiverId = userDoctor.value.id,
+                message = vectaraQueryResponse?.responseSet?.first()?.summary?.first()?.text ?: "",
+                timestamp = System.currentTimeMillis(),
+                chatType = chatType,
+                chatRoomId = chatRoomId,
+            )
+            _chatRoomMessages.value = updateCachedChatRoomMessages(
+                chatRoomId = chatRoomId,
+                numberOfUnreadMessages = 0,
+                chatMessageList = listOf(chatMessageUIModel.toDomainModel())
+            ).toUIModel()
+            sendChatMessageUseCase.sendChatMessage(chatMessageUIModel.toDomainModel())
+        }
+
     }
 
     private suspend fun sendMessageNormal(message: String) {
@@ -158,11 +150,11 @@ class ChatRoomViewModel(
     }
 
     fun onPatientInfoClicked() {
-        navController?.navigate(
-            route =
-            KreekNavDestination.PatientInfo.getNavigationRoute(
-                patientId = _chatRoomMessages.value.patientId ?: ""
-            ).route
-        )
+//        navController?.navigate(
+//            route =
+//            KreekNavDestination.PatientInfo.getNavigationRoute(
+//                patientId = _chatRoomMessages.value.patientId ?: ""
+//            ).route
+//        )
     }
 }

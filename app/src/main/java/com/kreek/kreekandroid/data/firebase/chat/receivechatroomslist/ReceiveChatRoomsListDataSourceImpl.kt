@@ -20,10 +20,10 @@ class ReceiveChatRoomsListDataSourceImpl : ReceiveChatRoomsListDataSource {
     private val _chatRoomsInfoListFlow = MutableSharedFlow<List<ChatRoomInfo>>()
     override fun invoke(userId: String, chatType: ChatType): Flow<List<ChatRoomInfo>> {
         val database = FirebaseDatabase.getInstance()
-        val reference = if (chatType == ChatType.GROUP) {
-            database.getReference("kreek_messages/chat_rooms_info/$userId/group_chat_room")
-        } else {
-            database.getReference("kreek_messages/chat_rooms_info/$userId/privet_chat_room")
+        val reference = when (chatType) {
+            ChatType.GROUP ->  database.getReference("kreek_messages/chat_rooms_info/$userId/group_chat_room")
+            ChatType.PRIVATE -> database.getReference("kreek_messages/chat_rooms_info/$userId/privet_chat_room")
+            ChatType.VECTARA_CHAT_BOT -> return _chatRoomsInfoListFlow
         }
         val listener = object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {

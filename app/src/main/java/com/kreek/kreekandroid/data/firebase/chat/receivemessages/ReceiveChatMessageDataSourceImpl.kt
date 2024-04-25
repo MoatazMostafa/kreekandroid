@@ -30,7 +30,7 @@ class ReceiveChatMessageDataSourceImpl : ReceiveChatMessageDataSource {
             ChatType.PRIVATE ->
                 database.getReference("kreek_messages/direct_messages/$chatRoomId")
             ChatType.VECTARA_CHAT_BOT ->
-                database.getReference("kreek_messages/vectara_chat_bot/$chatRoomId")
+               return _messagesFlow
         }
         val messageListener: ValueEventListener?
         var query = reference.orderByChild("timestamp").startAfter(lastMessageTimestamp.toDouble())

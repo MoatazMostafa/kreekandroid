@@ -12,6 +12,8 @@ import com.kreek.kreekandroid.domain.usecases.chat.local.CacheChatRoomInfoListUs
 import com.kreek.kreekandroid.domain.usecases.chat.local.CacheChatRoomInfoListUseCaseImpl
 import com.kreek.kreekandroid.domain.usecases.chat.local.CacheChatRoomMessagesListUseCase
 import com.kreek.kreekandroid.domain.usecases.chat.local.CacheChatRoomMessagesListUseCaseImpl
+import com.kreek.kreekandroid.domain.usecases.chat.local.GetCachedChatRoomMessagesListFlowUseCase
+import com.kreek.kreekandroid.domain.usecases.chat.local.GetCachedChatRoomMessagesListFlowUseCaseImpl
 import com.kreek.kreekandroid.domain.usecases.chat.local.GetCachedChatRoomMessagesListUseCase
 import com.kreek.kreekandroid.domain.usecases.chat.local.GetCachedChatRoomMessagesListUseCaseImpl
 import com.kreek.kreekandroid.domain.usecases.chat.local.GetCachedChatRoomMessagesUseCase
@@ -109,4 +111,7 @@ val useCaseModule = module {
         GetCachedChatRoomMessagesUseCaseImpl(get())
     }
 
+    factory<GetCachedChatRoomMessagesListFlowUseCase> {
+        GetCachedChatRoomMessagesListFlowUseCaseImpl(get())
+    }
 }

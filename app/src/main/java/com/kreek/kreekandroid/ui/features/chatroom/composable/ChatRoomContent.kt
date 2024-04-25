@@ -46,6 +46,7 @@ fun ChatRoomContent(
     modifier: Modifier = Modifier,
     chatRoomMessages: ChatRoomMessagesUIModel,
     userDoctor: DoctorUIModel,
+    chatType: ChatType,
     onSendMessage: (String) -> Unit,
     onPatientInfoClicked: () -> Unit,
 ) {
@@ -57,7 +58,7 @@ fun ChatRoomContent(
             .background(MaterialTheme.colorScheme.background)
             .clickable { onPatientInfoClicked() }) {
             CircleShapeIcon(
-                icon = when (chatRoomMessages.chatType) {
+                icon = when (chatType) {
                     ChatType.VECTARA_CHAT_BOT -> {
                         R.drawable.ic_chat_bot
                     }
@@ -72,7 +73,7 @@ fun ChatRoomContent(
                 }
             )
             Spacer(modifier = Modifier.width(16.dp))
-            when (chatRoomMessages.chatType) {
+            when (chatType) {
                 ChatType.VECTARA_CHAT_BOT -> {
                     Text(
                         modifier = Modifier.align(Alignment.CenterVertically),
@@ -223,6 +224,7 @@ fun PatientChatRoomContentPreview() {
             userDoctor = DoctorUIModel(),
             onSendMessage = { },
             onPatientInfoClicked = { },
+            chatType = ChatType.VECTARA_CHAT_BOT,
         )
     }
 }

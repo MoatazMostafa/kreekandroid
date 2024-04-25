@@ -16,6 +16,7 @@ fun ChatRoomScreen(
             modifier = modifier,
             chatRoomMessages = patientChatRoomViewModel.chatRoomMessages.collectAsState().value,
             userDoctor = patientChatRoomViewModel.userDoctor.collectAsState().value,
+            chatType = patientChatRoomViewModel.chatType,
             onSendMessage = patientChatRoomViewModel::sendMessage,
             onPatientInfoClicked = patientChatRoomViewModel::onPatientInfoClicked
         )

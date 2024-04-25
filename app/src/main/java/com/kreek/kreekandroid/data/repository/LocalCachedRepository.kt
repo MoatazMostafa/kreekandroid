@@ -5,6 +5,7 @@ import com.kreek.kreekandroid.data.firebase.doctor.model.Doctor
 import com.kreek.kreekandroid.domain.model.ChatMessageDomainModel
 import com.kreek.kreekandroid.domain.model.ChatRoomInfoDomainModel
 import com.kreek.kreekandroid.domain.model.ChatRoomMessagesDomainModel
+import kotlinx.coroutines.flow.MutableSharedFlow
 
 interface LocalCachedRepository {
     suspend fun cacheDoctor(doctor: Doctor)
@@ -21,4 +22,6 @@ interface LocalCachedRepository {
         numberOfUnreadMessages: Int?,
         chatMessageList: List<ChatMessageDomainModel>?
     ): ChatRoomMessagesDomainModel
+
+    suspend fun getCachedChatRoomMessagesListFlow(): MutableSharedFlow<List<ChatRoomMessages>>
 }

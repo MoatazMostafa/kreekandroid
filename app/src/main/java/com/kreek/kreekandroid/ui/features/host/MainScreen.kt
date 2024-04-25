@@ -103,9 +103,7 @@ fun MainScreen(
                         showKreekLogo = true,
                         showBackButton = false,
                         topBarActionList = listOf(
-                            TopBarAction.Search,
                             TopBarAction.Profile,
-                            TopBarAction.Menu
                         ),
                         topBarActionClick = {
                             //TODO handle topBar button click
@@ -146,11 +144,7 @@ fun MainScreen(
                         showKreekLogo = false,
                         showBackButton = true,
                         backButtonClick = { navController.popBackStack() },
-                        topBarActionList = listOf(
-                            TopBarAction.VideoCall,
-                            TopBarAction.VoiceCall,
-                            TopBarAction.Menu
-                        ),
+                        topBarActionList = listOf(),
                         topBarActionClick = {
                             //TODO handle topBar button click
                         }
@@ -208,6 +202,7 @@ fun MainScreen(
                         showTopBar = true,
                         showKreekLogo = false,
                         showBackButton = true,
+                        backButtonClick = { navController.popBackStack() },
                         topBarActionList = listOf(),
                         topBarActionClick = {
                             //TODO handle topBar button click

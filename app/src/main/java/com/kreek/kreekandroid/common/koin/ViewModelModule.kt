@@ -38,7 +38,8 @@ val viewModelModule = module {
             cacheChatRoomInfoListUseCase = get(),
             getCachedChatRoomMessagesListUseCase = get(),
             getCachedChatRoomMessagesUseCase = get(),
-            updateCachedChatRoomMessages = get()
+            updateCachedChatRoomMessages = get(),
+            sendChatRoomUseCase = get()
         )
     }
 
@@ -47,11 +48,11 @@ val viewModelModule = module {
             application = androidApplication(),
             backStackEntryArguments = arguments,
             sendChatMessageUseCase = get(),
-            receiveChatMessageUseCase = get(),
             getCachedChatRoomMessagesUseCase = get(),
             updateCachedChatRoomMessages = get(),
             getVectaraQueryResponseUseCase = get(),
             getCachedDoctorUseCase = get(),
+            getCachedChatRoomMessagesListFlow = get()
         )
     }
 

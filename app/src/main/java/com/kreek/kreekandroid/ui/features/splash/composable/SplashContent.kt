@@ -18,13 +18,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import com.kreek.kreekandroid.R
 import com.kreek.kreekandroid.ui.theme.KreekandroidTheme
+import kotlinx.coroutines.delay
 
 
 @Composable
@@ -39,6 +39,7 @@ fun SplashContent(
 
     LaunchedEffect(key1 = true, block = {
         onStart()
+        delay(2000)
         state = true
     })
 
